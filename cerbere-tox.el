@@ -24,16 +24,30 @@
 
 ;;; Code:
 
-;;; Default setting lists ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar cerbere--tox-program "tox"
-  "Tox binary path.")
+(require 'cerbere-common)
 
-(defvar cerbere--tox-arg ""
-  "Argument to pass to tox.")
+
+;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defgroup cerbere-tox nil
+  "Tox back-end for Cerbere."
+  :group 'cerbere)
+
+(defcustom cerbere--tox-program "tox"
+  "Tox binary path."
+  :type 'string
+  :group cerbere-tox)
+
+(defcustom cerbere--tox-arg ""
+  "Argument to pass to tox."
+  :type 'string
+  :group cerbere-tox)
 
 (defvar cerbere--tox-default-env nil
-  "Default argument for Tox")
+  "Default argument for Tox."
+  :type 'string
+  :group cerbere-tox)
 
 ;;; Commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -106,8 +120,9 @@ specified in `cerbere--tox-default-env'."
   (with-tox current askenvs
      (unless current
        (error "No function at point"))
-     (compile (cerbere--tox-get-command (concat (cerbere--tox-extract-path) ":" current)
-			       toxenvs))))
+     (cerbere--build (cerbere--tox-get-command
+		      (concat (cerbere--tox-extract-path) ":" current)
+		      toxenvs))))
 
 (defun cerbere--tox-current-class (&optional askenvs)
   "Launch tox on current class.
@@ -117,8 +132,9 @@ specified in `cerbere--tox-default-env'."
   (with-tox current askenvs
      (if current
 	 (let ((current-class (car (split-string current "\\."))))
-	   (compile (cerbere--tox-get-command (concat (cerbere--tox-extract-path) ":" current-class)
-				     toxenvs)))
+	   (cerbere--build (cerbere--tox-get-command
+			    (concat (cerbere--tox-extract-path) ":" current-class)
+			    toxenvs)))
        (error "No class at point"))))
 
 
@@ -131,7 +147,8 @@ specified in `cerbere--tox-default-env'."
 ;;   (interactive "P")
 ;;   (with-tox current askenvs
 ;;      (if current
-;; 	 (compile (cerbere--tox-get-command (cerbere--tox-extract-path) toxenvs)))))
+;; 	 (cerbere--build (cerbere--tox-get-command
+;;                          (cerbere--tox-extract-path) toxenvs)))))
 
 
 (defun cerbere--tox-current-project (&optional askenvs)
@@ -141,7 +158,7 @@ specified in `cerbere--tox-default-env'."
   (interactive "P")
   (with-tox current askenvs
      (if current
-	 (compile (cerbere--tox-get-command "" toxenvs)))))
+	 (cerbere--build (cerbere--tox-get-command "" toxenvs)))))
 
 ;;;###autoload
 (defun cerbere-tox (command)

@@ -19,9 +19,12 @@
 
 ;;; Code:
 
-;; (require 's)
-;; (require 'f)
+(require 's)
+(require 'f)
 (require 'go-mode)
+
+(require cerbere-common)
+
 
 
 (defgroup cerbere-go nil
@@ -31,12 +34,12 @@
 (defcustom go-test-args ""
   "Argument to pass to go."
   :type 'string
-  :group 'cerbere)
+  :group 'cerbere-go)
 
 (defcustom go-test-verbose nil
   "Display debugging information during test execution."
   :type 'boolean
-  :group 'cerbere)
+  :group 'cerbere-go)
 
 
 ;; Commands
@@ -85,8 +88,8 @@
 
 
 (defun cerbere--go-test-run (args)
-  (compile (cerbere--go-test-get-program
-	    (cerbere--go-test-arguments args))))
+  (cerbere--build (cerbere--go-test-get-program
+		   (cerbere--go-test-arguments args))))
 
 
 ; API

@@ -22,6 +22,8 @@
 (require 's)
 (require 'f)
 
+(require 'cerbere-common)
+
 
 (defgroup cerbere-phpunit nil
   "PHPUnit utility"
@@ -106,8 +108,8 @@
 
 
 (defun cerbere--phpunit-run (args)
-  (compile (cerbere--phpunit-get-program
-	    (cerbere--phpunit-arguments args))))
+  (cerbere-build (cerbere--phpunit-get-program
+		  (cerbere--phpunit-arguments args))))
 
 
 ;; API
