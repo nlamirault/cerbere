@@ -36,7 +36,7 @@ virtual-test :
 .PHONY: clean
 clean :
 	$(CASK) clean-elc
-	rm elpa
+	rm -f elpa
 	rm -fr dist
 
 reset : clean

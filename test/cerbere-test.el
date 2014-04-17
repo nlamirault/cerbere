@@ -1,8 +1,6 @@
-;;; cerbere-go-test-test.el --- Tests for Cerbere Go lang backend
+;;; cerbere-test.el --- Tests for Cerbere
 
-;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
-
-;; Copyright (C) 2014  Nicolas Lamirault
+;; Copyright (C) 2014 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -27,30 +25,14 @@
 (require 'cerbere)
 
 
-(defun go-test-command (&rest arg)
-  (apply 's-concat "go test " arg))
-
-
 (ert-deftest test-cerbere-go-keybindings ()
   (with-temp-buffer
-    (go-mode)
     (cerbere-mode)
+    (should (eql 'cerbere-version
+    		 (key-binding (kbd "C-c c v"))))
     (should (eql 'cerbere-current-test
-		 (key-binding (kbd "C-c c t"))))))
-
-;; Arguments
-
-(ert-deftest test-go-test-get-program-without-args ()
-  (should (string= (go-test-command)
-		   (cerbere--go-test-get-program
-		    (cerbere--go-test-arguments "")))))
-
-(ert-deftest test-go-test-add-verbose-argument ()
-  (let ((cerbere-go-test-verbose t))
-    (should (string= (go-test-command " -v")
-		     (cerbere--go-test-get-program
-		      (cerbere--go-test-arguments ""))))))
-
-
-(provide 'gotest-test)
-;;; cerbere-go-test-test.el ends here
+		 (key-binding (kbd "C-c c t"))))
+    (should (eql 'cerbere-current-file
+		 (key-binding (kbd "C-c c f"))))
+    (should (eql 'cerbere-current-project
+		 (key-binding (kbd "C-c c p"))))))
