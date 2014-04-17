@@ -30,14 +30,6 @@
 (defun go-test-command (&rest arg)
   (apply 's-concat "go test " arg))
 
-
-(ert-deftest test-cerbere-go-keybindings ()
-  (with-temp-buffer
-    (go-mode)
-    (cerbere-mode)
-    (should (eql 'cerbere-current-test
-		 (key-binding (kbd "C-c c t"))))))
-
 ;; Arguments
 
 (ert-deftest test-go-test-get-program-without-args ()
