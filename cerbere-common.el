@@ -26,5 +26,20 @@
   (compile command))
 
 
+;; (defun notify-compilation-result (buffer msg)
+;;   "Notify that the compilation is finished,
+;; close the *compilation* buffer if the compilation is successful,
+;; and set the focus back to Emacs frame"
+;;   (if (string-match "^finished" msg)
+;;       (progn
+;; 	(delete-windows-on buffer)
+;; 	(tooltip-show "\n Testing Successful :-) \n "))
+;;     (tooltip-show "\n Tests Failed :-( \n "))
+;;   (setq current-frame (car (car (cdr (current-frame-configuration)))))
+;;   (select-frame-set-input-focus current-frame))
+
+;; (add-to-list 'compilation-finish-functions
+;; 	     'notify-compilation-result)
+
 (provide 'cerbere-common)
 ;;; cerbere-common.el ends here
