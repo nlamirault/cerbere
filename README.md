@@ -1,5 +1,7 @@
 # Cerbere
 
+[![Build Status](https://travis-ci.org/nlamirault/cerbere.svg?branch=0.1.0)](https://travis-ci.org/nlamirault/cerbere)
+
 *Cerbere* is a a global mode for [TDD](http://en.wikipedia.org/wiki/Test-driven_development) in Emacs. Some backends are available:
 * [tox](https://pypi.python.org/pypi/tox)
 * [go test](http://golang.org/pkg/testing/)
