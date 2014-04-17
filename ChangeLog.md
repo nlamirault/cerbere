@@ -1,6 +1,6 @@
 # Cerbere ChangeLog
 
-## Version 0.1.0 (IN PROGRESS)
+## Version 0.1.0 (04/17/2014)
 
 - Refactoring backends
 - Integrate [gotest.el](https://github.com/nlamirault/gotest.el)
