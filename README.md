@@ -37,6 +37,25 @@ Keybinding           | Description
 <kbd>C-c c p</kbd>   | launch all unit tests for current project
 
 
+## Development
+
+### Cask
+
+`cerbere` use [Cask](https://github.com/cask/cask) (>=0.6) for
+dependencies management. Install it and retrieve dependencies :
+
+    $ curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+    $ export PATH="$HOME/.cask/bin:$PATH"
+    $ cask
+
+
+### Tests
+
+Launch unit tests :
+
+    $ make clean test
+
+
 ## Support / Contribute
 
 See [here](CONTRIBUTING.md)
