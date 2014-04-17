@@ -1,12 +1,6 @@
-;;; cerbere-phpunit-test.el --- Tests for phpunit.el
+;;; cerbere-phpunit-test.el --- Unit tests for phpunit backend of Cerbere
 
-;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
-
-;;; Commentary:
-
-;; Unit tests for phpunit backend of Cerbere
-
-;; Copyright (C) 2014  Nicolas Lamirault
+;; Copyright (C) 2014 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
