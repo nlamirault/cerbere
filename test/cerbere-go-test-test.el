@@ -34,12 +34,14 @@
 
 (ert-deftest test-go-test-get-program-without-args ()
   (should (string= (go-test-command)
-		   (go-test-get-program (go-test-arguments "")))))
+		   (cerbere--go-test-get-program
+		    (cerbere--go-test-arguments "")))))
 
 (ert-deftest test-go-test-add-verbose-argument ()
-  (let ((go-test-verbose-mode t))
+  (let ((cerbere-go-test-verbose t))
     (should (string= (go-test-command " -v")
-		     (go-test-get-program (go-test-arguments ""))))))
+		     (cerbere--go-test-get-program
+		      (cerbere--go-test-arguments ""))))))
 
 
 (provide 'gotest-test)

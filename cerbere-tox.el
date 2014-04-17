@@ -24,6 +24,7 @@
 
 ;;; Code:
 
+(require 'python)
 
 (require 'cerbere-common)
 
@@ -37,17 +38,17 @@
 (defcustom cerbere--tox-program "tox"
   "Tox binary path."
   :type 'string
-  :group cerbere-tox)
+  :group 'cerbere-tox)
 
 (defcustom cerbere--tox-arg ""
   "Argument to pass to tox."
   :type 'string
-  :group cerbere-tox)
+  :group 'cerbere-tox)
 
 (defvar cerbere--tox-default-env nil
   "Default argument for Tox."
   :type 'string
-  :group cerbere-tox)
+  :group 'cerbere-tox)
 
 ;;; Commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

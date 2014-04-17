@@ -5,7 +5,7 @@
 ;; Version: 0.1.0
 ;; Keywords: python, go, php, tests, tdd
 
-;; Package-Requires: ((s "1.9.0") (f "0.11.0") (go-mode "20131222") (pkg-info "0.5"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (go-mode "20140409") (pkg-info "0.5"))
 
 ;; Copyright (C) 2014  Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -26,15 +26,15 @@
 ;;; Code:
 
 ;; Global dependencies
+(require 'f)
 (require 'pkg-info)
 (require 's)
-(require 'f)
 
 ;; Project dependencies
 (require 'cerbere-common)
 (require 'cerbere-gotest)
 (require 'cerbere-phpunit)
-(require 'cerbere-tox)
+;;(require 'cerbere-tox)
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

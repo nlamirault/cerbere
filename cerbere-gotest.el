@@ -23,8 +23,8 @@
 (require 'f)
 (require 'go-mode)
 
-(require cerbere-common)
 
+(require 'cerbere-common)
 
 
 (defgroup cerbere-go nil

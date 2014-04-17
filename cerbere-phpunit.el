@@ -108,7 +108,7 @@
 
 
 (defun cerbere--phpunit-run (args)
-  (cerbere-build (cerbere--phpunit-get-program
+  (cerbere--build (cerbere--phpunit-get-program
 		  (cerbere--phpunit-arguments args))))
 
 

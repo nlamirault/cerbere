@@ -1,5 +1,5 @@
 EMACS ?= emacs
-EMACSFLAGS = -L .
+EMACSFLAGS = --debug-init -L .
 CASK = cask
 VAGRANT = vagrant
 
@@ -27,8 +27,9 @@ virtual-test :
 
 .PHONY: clean
 clean :
-	rm -f $(OBJECTS)
+	$(CASK) clean-elc
 	rm -rf elpa
+	rm -fr dist
 
 reset : clean
 	rm -rf .cask # Clean packages installed for development
