@@ -39,22 +39,22 @@
   :type 'string
   :group 'cerbere-phpunit)
 
-(defcustom cerbere--phpunit-stop-on-error nil
+(defcustom cerbere-phpunit-stop-on-error nil
   "Stop execution upon first error."
   :type 'boolean
   :group 'cerbere-phpunit)
 
-(defcustom cerbere--phpunit-stop-on-failure nil
+(defcustom cerbere-phpunit-stop-on-failure nil
   "Stop execution upon first error or failure."
   :type 'boolean
   :group 'cerbere-phpunit)
 
-(defcustom cerbere--phpunit-stop-on-skipped nil
+(defcustom cerbere-phpunit-stop-on-skipped nil
   "Stop execution upon first skipped test."
   :type 'boolean
   :group 'cerbere-phpunit)
 
-(defcustom cerbere--phpunit-verbose-mode nil
+(defcustom cerbere-phpunit-verbose-mode nil
   "Display debugging information during test execution."
   :type 'boolean
   :group 'cerbere-phpunit)
@@ -96,13 +96,13 @@
 
 (defun cerbere--phpunit-arguments (args)
   (let ((opts args))
-     (when cerbere--phpunit-stop-on-error
+     (when cerbere-phpunit-stop-on-error
        (setq opts (s-concat opts " --stop-on-error")))
-     (when cerbere--phpunit-stop-on-failure
+     (when cerbere-phpunit-stop-on-failure
        (setq opts (s-concat opts " --stop-on-failure")))
-     (when cerbere--phpunit-stop-on-skipped
+     (when cerbere-phpunit-stop-on-skipped
        (setq opts (s-concat opts " --stop-on-skipped")))
-     (when cerbere--phpunit-verbose-mode
+     (when cerbere-phpunit-verbose-mode
        (setq opts (s-concat opts " --verbose")))
      opts))
 

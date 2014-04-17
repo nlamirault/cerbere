@@ -23,6 +23,7 @@
 
 
 (require 'test-helper)
+
 (require 'cerbere)
 
 
