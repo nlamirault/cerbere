@@ -19,7 +19,7 @@
  (depends-on "f")
  (depends-on "go-mode")
  (depends-on "pkg-info")
- (depends-on "python-mode")
+ (depends-on "python")
  ;; unit tests
  (depends-on "ert")
  (depends-on "ert-runner"))

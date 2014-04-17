@@ -34,7 +34,7 @@
 (require 'cerbere-common)
 (require 'cerbere-gotest)
 (require 'cerbere-phpunit)
-(require 'cerbere-tox)
+;;(require 'cerbere-tox)
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
