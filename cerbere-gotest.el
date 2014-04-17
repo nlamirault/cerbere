@@ -31,12 +31,12 @@
   "Golang back-end for Cerbere."
   :group 'cerbere)
 
-(defcustom go-test-args ""
-  "Argument to pass to go."
-  :type 'string
-  :group 'cerbere-go)
+;; (defcustom go-test-args ""
+;;   "Argument to pass to go."
+;;   :type 'string
+;;   :group 'cerbere-go)
 
-(defcustom go-test-verbose nil
+(defcustom cerbere-go-test-verbose nil
   "Display debugging information during test execution."
   :type 'boolean
   :group 'cerbere-go)
@@ -82,7 +82,7 @@
 
 (defun cerbere--go-test-arguments (args)
   (let ((opts args))
-    (when go-test-verbose
+    (when cerbere-go-test-verbose
       (setq opts (s-concat opts " -v")))
     opts))
 

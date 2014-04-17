@@ -1,4 +1,11 @@
-.cask/
-
-# Compiled
+*~
+*\#*\#
+*.\#*
 *.elc
+.cask
+elpa
+.depend
+cerbere-pkg.el
+packages/*
+TAGS
+.DS_STORE

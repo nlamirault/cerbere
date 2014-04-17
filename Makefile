@@ -1,5 +1,5 @@
-EMACS = emacs
-EMACSFLAGS =
+EMACS ?= emacs
+EMACSFLAGS = -L .
 CASK = cask
 VAGRANT = vagrant
 
@@ -16,11 +16,9 @@ build : elpa $(OBJECTS)
 
 .PHONY: test
 test : build
-	${CASK} exec ert-runner --no-win
-
-.PHONY: ci
-ci : elpa
-	${CASK} exec ert-runner --no-win < /dev/tty
+	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
+	$(EMACSFLAGS) \
+	-l test/run-tests
 
 .PHONY: virtual-test
 virtual-test :
@@ -37,5 +35,5 @@ reset : clean
 
 %.elc : %.el
 	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
-		$(EMACSFLAGS) \
-		-f batch-byte-compile $<
+	$(EMACSFLAGS) \
+	-f batch-byte-compile $<

@@ -25,16 +25,18 @@
 
 ;;; Code:
 
+;; Global dependencies
 (require 'pkg-info)
 (require 's)
 (require 'f)
 
-;;(add-to-list 'load-path "/home/nlamirault/Perso/cerbere/")
-
+;; Project dependencies
+(require 'cerbere-common)
 (require 'cerbere-gotest)
 (require 'cerbere-phpunit)
 (require 'cerbere-tox)
 
+;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgroup cerbere nil
   "Unit testing in Emacs for several programming languages."
@@ -47,17 +49,6 @@
 
 (defvar cerbere-package-version "0.1.0"
   "Release version of Cerbere.")
-
-
-;;; user
-
-;;;###autoload
-(defun cerbere-version ()
-  "Dislay the Cerbere's version."
-  (interactive)
-  ;;(message "Cerbere version: %s" cerbere-package-version)
-  (let ((version (pkg-info-version-info 'cerbere)))
-    (message "Cerbere %s" version)))
 
 
 ;;; backends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -117,9 +108,16 @@ Each backend provide several method for unit testing.")
      (cerbere-call-backend backend 'project)))
 
 
+;;;###autoload
+(defun cerbere-version ()
+  "Dislay the Cerbere's version."
+  (interactive)
+  ;;(message "Cerbere version: %s" cerbere-package-version)
+  (let ((version (pkg-info-version-info 'cerbere)))
+    (message "Cerbere %s" version)))
+
 
 ;;; Mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (defvar cerbere-mode-map
   (let ((map (make-sparse-keymap)))
