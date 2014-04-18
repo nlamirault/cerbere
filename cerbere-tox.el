@@ -45,7 +45,7 @@
   :type 'string
   :group 'cerbere-tox)
 
-(defvar cerbere--tox-default-env nil
+(defcustom cerbere--tox-default-env nil
   "Default argument for Tox."
   :type 'string
   :group 'cerbere-tox)

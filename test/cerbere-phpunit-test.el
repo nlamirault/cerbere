@@ -23,6 +23,7 @@
 (require 'test-helper)
 
 (require 'cerbere)
+(require 'cerbere-phpunit)
 
 
 (defun phpunit-command (&rest arg)

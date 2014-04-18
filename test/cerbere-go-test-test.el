@@ -25,7 +25,7 @@
 (require 'test-helper)
 
 (require 'cerbere)
-
+(require 'cerbere-gotest)
 
 (defun go-test-command (&rest arg)
   (apply 's-concat "go test " arg))

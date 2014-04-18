@@ -1,5 +1,9 @@
 #!/usr/bin/env emacs --script
 
+(message "Run unit tests")
+
+(setq debug-on-error t)
+
 (let ((current-directory (file-name-directory load-file-name)))
   (setq cerbere-test-path (expand-file-name "." current-directory))
   (setq cerbere-root-path (expand-file-name ".." current-directory)))
@@ -7,7 +11,6 @@
 (add-to-list 'load-path cerbere-root-path)
 (add-to-list 'load-path cerbere-test-path)
 
-(require 'cerbere)
 (require 'cl)
 
 (dolist (test-file (or argv (directory-files cerbere-test-path t "-test.el$")))
