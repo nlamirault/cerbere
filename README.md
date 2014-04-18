@@ -20,15 +20,10 @@ or [Cask](https://github.com/cask/cask):
 In your `.emacs` file, add this :
 
 ```lisp
-(cerbere-global-mode)
+(add-hook 'python-mode-hook 'cerbere-mode)
+(add-hook 'go-mode-hook 'cerbere-mode)
+(add-hook 'web-mode-hook 'cerbere-mode)
 ```
-
-## Usage
-
-These functions are available :
-* `test-current-test`: launch unit tests for the current test in a file
-* `test-current-file`: launch unit tests for the current file
-* `test-current-project`: launch all unit tests
 
 ## Keymap
 

@@ -122,11 +122,15 @@ Each backend provide several method for unit testing.")
     map)
   "Keymap used by `cerbere-mode'..")
 
+;;;###autoload
+(defconst cerbere-mode-line-lighter " Cerbere"
+  "The default lighter for `cerbere-mode'.")
+
 (define-minor-mode cerbere-mode
   "Minor mode for Cerbere..
 
 \\{cerbere-mode-map}"
-  :lighter " Cerbere"
+  :lighter cerbere-mode-line-lighter
   :keymap cerbere-mode-map
   :group 'cerbere
   :require 'cerbere)
