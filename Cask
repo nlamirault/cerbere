@@ -4,7 +4,7 @@
 (source "gnu" "http://elpa.gnu.org/packages/")
 (source "marmalade" "http://marmalade-repo.org/packages/")
 
-(package "cerbere" "0.1.0" "TDD mode for Emacs")
+(package-file "cerbere.el")
 
 (files "cerbere-common.el"
        "cerbere-tox.el"
