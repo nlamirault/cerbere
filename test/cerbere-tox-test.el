@@ -23,6 +23,14 @@
 
 (require 'cerbere)
 
+;; cerbere-tox mode
+
+(ert-deftest test-cerbere-tox ()
+  (with-temp-buffer
+    (python-mode)
+    (should (featurep 'cerbere-tox))))
+
+
 ;; (ert-deftest test-cerbere-tox-get-current-class ()
 ;;   (should (string= "FooTestCase"
 ;;  		   (cerbere--tox-current-class))))

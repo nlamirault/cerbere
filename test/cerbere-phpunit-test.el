@@ -30,6 +30,15 @@
   (apply 's-concat "phpunit -c " "phpunit.xml" arg))
 
 
+;; cerbere-phpunit Mode
+
+(ert-deftest test-cerbere-phpunit ()
+  (with-temp-buffer
+    (should (featurep 'cerbere-phpunit))))
+
+
+;;
+
 (ert-deftest test-cerbere-phpunit-get-current-class ()
   (should (string= "PhpUnitTest"
 		   (cerbere--phpunit-get-current-class "/tmp/foo/PhpUnitTest.php"))))

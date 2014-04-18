@@ -33,9 +33,9 @@
 ;; Project dependencies
 (require 'cerbere-common)
 
-(eval-after-load "phpunit" '(require 'cerbere-phpunit))
+(require 'cerbere-phpunit)
 (eval-after-load "go-mode" '(require 'cerbere-gotest))
-(eval-after-load "python-mode" (require 'cerbere-tox))
+(eval-after-load "python" '(require 'cerbere-tox))
 
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -55,7 +55,7 @@
 
 ;;; backends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar cerberes-backends
+(defvar cerbere-backends
   '(("py" . cerbere-tox)
     ("go" . cerbere-gotest)
     ("php" . cerbere-phpunit))
@@ -66,49 +66,39 @@ Each backend provide several method for unit testing.")
   "Add a new backend for Cerbere.
 `F-EXT' is the file extensions.
 `NAME' is the backend name"
-  (push (cons f-ext name) cerberes-backends))
+  (push (cons f-ext name) cerbere-backends))
 
 (defun cerbere-find-backend (f-ext)
-  "Search a candidate into all available backends using `F-EXT'"
-  (message "ext: %s %s" f-ext cerberes-backends)
-  (assoc f-ext cerberes-backends))
+  "Search a candidate into all available backends using `F-EXT'."
+  (message "ext: %s %s" f-ext cerbere-backends)
+  (assoc f-ext cerbere-backends))
 
-(defmacro with-backend (backend f-ext &rest body)
-  "Macro which setup current `BACKEND' and execute `BODY'.
-`F-EXT' is used to search the backend."
-  `(let ((,backend (cerbere-find-backend ,f-ext)))
-     (if ,backend
-	 ,@body
-       (error "No backend available"))))
+(defun cerbere-call-backend (name command)
+  "Call `BACKEND' with `NAME' using `COMMAND'."
+  (let ((backend (or (cerbere-find-backend name) (error "No such backend"))))
+    (funcall (cdr backend) command)))
 
-(defun cerbere-call-backend (backend command)
-  "Call `BACKEND' function using `COMMAND'."
-  (funcall (cdr backend) command))
+(defun cerbere-extract-file-ext ()
+  "Extract file extension from current buffer."
+  (f-ext (buffer-file-name)))
 
 ;;;###autoload
 (defun cerbere-current-test ()
   "Launch backend on current test."
   (interactive)
-  (with-backend backend (f-ext (buffer-file-name))
-  ;; (let ((backend (cerbere-find-backend (f-ext (buffer-file-name)))))
-  ;;   (if backend
-	(cerbere-call-backend backend 'test)))
-;;      (error "No backend available"))))
+  (cerbere-call-backend (cerbere-extract-file-ext) 'test))
 
 ;;;###autoload
 (defun cerbere-current-file ()
   "Launch backend on current file."
   (interactive)
-  (with-backend backend (f-ext (buffer-file-name))
-     (cerbere-call-backend backend 'file)))
+  (cerbere-call-backend (cerbere-extract-file-ext) 'file))
 
 ;;;###autoload
 (defun cerbere-current-project ()
   "Launch backend on current project."
   (interactive)
-  (with-backend backend (f-ext (buffer-file-name))
-     (cerbere-call-backend backend 'project)))
-
+  (cerbere-call-backend (cerbere-extract-file-ext) 'project))
 
 ;;;###autoload
 (defun cerbere-version ()

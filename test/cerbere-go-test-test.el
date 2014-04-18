@@ -30,6 +30,16 @@
 (defun go-test-command (&rest arg)
   (apply 's-concat "go test " arg))
 
+
+
+;; cerbere-go-test
+
+(ert-deftest test-cerbere-go-test ()
+  (with-temp-buffer
+    (go-mode)
+    (should (featurep 'cerbere-gotest))))
+
+
 ;; Arguments
 
 (ert-deftest test-go-test-get-program-without-args ()
