@@ -19,8 +19,6 @@
 
 ;;; Code:
 
-(require 'test-helper)
-
 (require 'cerbere)
 
 ;; cerbere-tox mode
