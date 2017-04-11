@@ -38,7 +38,4 @@
 (message "Load cerbere : %s" cerbere-source-dir)
 (load (s-concat cerbere-source-dir "/cerbere.elc"))
 
-
-
-(provide 'test-helper)
 ;;; test-helper.el ends here
