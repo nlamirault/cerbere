@@ -5,8 +5,8 @@
 (setq debug-on-error t)
 
 (let ((current-directory (file-name-directory load-file-name)))
-  (setq cerbere-test-path (expand-file-name "." current-directory))
-  (setq cerbere-root-path (expand-file-name ".." current-directory)))
+  (setq cerbere-test-path (file-name-as-directory (expand-file-name "." current-directory)))
+  (setq cerbere-root-path (file-name-as-directory (expand-file-name ".." current-directory))))
 
 (add-to-list 'load-path cerbere-root-path)
 (add-to-list 'load-path cerbere-test-path)
