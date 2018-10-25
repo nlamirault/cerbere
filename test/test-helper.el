@@ -21,21 +21,15 @@
 
 ;;; Code:
 
-(require 'f)
+(defmacro cerbere-with-test-content (file-name &rest body)
+  "Setup a buffer backing FILE-NAME with CONTENT and run BODY in it."
+    (declare (indent 1))
+    `(save-excursion
+       (with-current-buffer (find-file-noselect
+                             (concat cerbere-test-path "data/" ,file-name))
+         (goto-char (point-min))
+         ,@body
+         (kill-buffer))))
 
-(setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
-      debug-on-error t)
-
-
-(defconst cerbere-testsuite-dir (f-parent (f-this-file))
-  "The testsuite directory for Cerbere.")
-
-(defconst cerbere-source-dir (f-parent cerbere-testsuite-dir)
-  "The cerbere source directory.")
-
-(message "Running tests on Emacs %s" emacs-version)
-
-(message "Load cerbere : %s" cerbere-source-dir)
-(load (s-concat cerbere-source-dir "/cerbere.elc"))
-
+(provide 'test-helper)
 ;;; test-helper.el ends here
