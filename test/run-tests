@@ -14,7 +14,8 @@
 (require 'cl)
 
 (dolist (test-file (or argv (directory-files cerbere-test-path t "-test.el$")))
-  (load test-file nil t))
+  (unless (string-prefix-p "flycheck_" (file-name-nondirectory test-file))
+    (load test-file nil t)))
 
 ;; run tests
 (ert-run-tests-batch-and-exit t)
