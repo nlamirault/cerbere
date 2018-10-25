@@ -3,7 +3,13 @@ EMACSFLAGS = --debug-init -L .
 CASK = cask
 VAGRANT = vagrant
 
-ELS = $(wildcard *.el)
+ELS = cerbere-common.el \
+	cerbere-gotest.el \
+	cerbere-phpunit.el \
+	cerbere-ruby-minitest.el \
+	cerbere-tox.el \
+	cerbere.el
+
 OBJECTS = $(ELS:.el=.elc)
 
 # VIRTUAL_EMACS = ${CASK} exec ${EMACS} -Q $(EMACSFLAGS) \
