@@ -162,7 +162,7 @@ specified in `cerbere--tox-default-env'."
 	 (cerbere--build (cerbere--tox-get-command "" toxenvs)))))
 
 ;;;###autoload
-(defun cerbere-tox (command)
+(defun cerbere-tox (command &optional test)
   "Tox cerbere backend."
   (pcase command
     (`test (cerbere--tox-current-test))

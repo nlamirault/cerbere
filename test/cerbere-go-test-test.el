@@ -51,6 +51,40 @@
 		     (cerbere--go-test-get-program
 		      (cerbere--go-test-arguments ""))))))
 
+(ert-deftest test-go-test-test-at-point ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (should-not (cerbere--go-test-test-at-point))
+    (forward-line 4)
+    (let ((test (cerbere--go-test-test-at-point)))
+      (should (equal "TestReverse" (cerbere--go-test-test-name test)))
+      (should (equal "hello_test.go" (cerbere--go-test-test-file test)))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))
+  (cerbere-with-test-content "go-test/hello.go"
+        (goto-char (point-max))
+    (should-not (cerbere--go-test-test-at-point))))
+
+(ert-deftest test-go-test-test-for-file ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (let ((test (cerbere--go-test-test-for-file)))
+      (should-not (cerbere--go-test-test-name test))
+      (should (equal "hello_test.go" (cerbere--go-test-test-file test)))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))
+  (cerbere-with-test-content "go-test/hello.go"
+    (goto-char (point-max))
+    (should-not (cerbere--go-test-test-for-file))))
+
+(ert-deftest test-go-test-test-for-project ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (let ((test (cerbere--go-test-test-for-project)))
+      (should-not (cerbere--go-test-test-name test))
+      (should-not (cerbere--go-test-test-file test))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test))))
+  (cerbere-with-test-content "go-test/hello.go"
+    (goto-char (point-max))
+    (let ((test (cerbere--go-test-test-for-project)))
+      (should-not (cerbere--go-test-test-name test))
+      (should-not (cerbere--go-test-test-file test))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))))
 
 (provide 'gotest-test)
 ;;; cerbere-go-test-test.el ends here

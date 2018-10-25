@@ -24,7 +24,7 @@
 ;; cerbere-tox mode
 
 (ert-deftest test-cerbere-tox ()
-  (with-temp-buffer
+  (cerbere-with-test-content "tox/tests/test_weighted_indegree.py"
     (python-mode)
     (should (featurep 'cerbere-tox))))
 

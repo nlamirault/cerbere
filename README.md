@@ -32,7 +32,13 @@ Keybinding           | Description
 <kbd>C-c c t</kbd>   | launch the current unit test
 <kbd>C-c c f</kbd>   | launch unit tests of the current file
 <kbd>C-c c p</kbd>   | launch all unit tests for current project
+<kbd>C-c c l</kbd>   | relaunch the last executed test
+<kbd>C-c c d</kbd>   | relaunch the current test or the last executed test
 
+
+## Backends
+
+To add a new backend, see the documentation for `cerbere-define-backend`.
 
 ## Development
 

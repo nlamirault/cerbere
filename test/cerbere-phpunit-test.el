@@ -22,11 +22,10 @@
 
 (require 'cerbere)
 (require 'cerbere-phpunit)
-
+(require 'test-helper)
 
 (defun phpunit-command (&rest arg)
   (apply 's-concat "phpunit -c " "phpunit.xml" arg))
-
 
 ;; cerbere-phpunit Mode
 
@@ -45,32 +44,77 @@
 
 (ert-deftest test-cerbere-phpunit-get-program-without-args ()
   (should (string= (phpunit-command)
-		   (cerbere--phpunit-get-program
+		   (cerbere--phpunit-get-program ""
 		    (cerbere--phpunit-arguments "")))))
 
 (ert-deftest test-phpunit-add-stop-on-error-argument ()
   (let ((cerbere-phpunit-stop-on-error t))
     (should (string= (phpunit-command " --stop-on-error")
-		     (cerbere--phpunit-get-program
+		     (cerbere--phpunit-get-program ""
 		      (cerbere--phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-stop-on-failure-argument ()
   (let ((cerbere-phpunit-stop-on-failure t))
     (should (string= (phpunit-command " --stop-on-failure")
-		     (cerbere--phpunit-get-program
+		     (cerbere--phpunit-get-program ""
 		      (cerbere--phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-stop-on-skipped-argument ()
   (let ((cerbere-phpunit-stop-on-skipped t))
     (should (string= (phpunit-command " --stop-on-skipped")
-		     (cerbere--phpunit-get-program
+		     (cerbere--phpunit-get-program ""
 		      (cerbere--phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-verbose-argument ()
   (let ((cerbere-phpunit-verbose-mode t))
     (should (string= (phpunit-command " --verbose")
-		     (cerbere--phpunit-get-program
+		     (cerbere--phpunit-get-program ""
 		      (cerbere--phpunit-arguments ""))))))
+
+(ert-deftest test-phpunit-test-at-point ()
+  (cerbere-with-test-content "phpunit/tests/SimpleTest.php"
+    (should-not (cerbere--phpunit-test-at-point))
+    (forward-line 8)
+    (let ((test (cerbere--phpunit-test-at-point)))
+      (should (equal "testDivide" (cerbere--phpunit-test-name test)))
+      (should (equal "SimpleTest" (cerbere--phpunit-test-class test)))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test)))))
+  (cerbere-with-test-content "phpunit/NoTest.php"
+        (forward-line 8)
+    (should-not (cerbere--phpunit-test-at-point))))
+
+(ert-deftest test-phpunit-test-for-file ()
+  (cerbere-with-test-content "phpunit/tests/SimpleTest.php"
+    (let ((test (cerbere--phpunit-test-for-file)))
+      (should-not (cerbere--phpunit-test-name test))
+      (should (equal "SimpleTest" (cerbere--phpunit-test-class test)))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test))))
+    (forward-line 8)
+    (let ((test (cerbere--phpunit-test-for-file)))
+      (should-not (cerbere--phpunit-test-name test))
+      (should (equal "SimpleTest" (cerbere--phpunit-test-class test)))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test)))))
+  (cerbere-with-test-content "phpunit/NoTest.php"
+    (forward-line 8)
+    (should-not (cerbere--phpunit-test-for-file))))
+
+(ert-deftest test-phpunit-test-for-project ()
+  (cerbere-with-test-content "phpunit/tests/SimpleTest.php"
+    (let ((test (cerbere--phpunit-test-for-project)))
+      (should-not (cerbere--phpunit-test-name test))
+      (should-not (cerbere--phpunit-test-class test))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test))))
+    (forward-line 8)
+    (let ((test (cerbere--phpunit-test-for-project)))
+      (should-not (cerbere--phpunit-test-name test))
+      (should-not (cerbere--phpunit-test-class test))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test)))))
+  (cerbere-with-test-content "phpunit/NoTest.php"
+    (forward-line 8)
+    (let ((test (cerbere--phpunit-test-for-project)))
+      (should-not (cerbere--phpunit-test-name test))
+      (should-not (cerbere--phpunit-test-class test))
+      (should (equal (concat cerbere-test-path "data/phpunit/") (cerbere--phpunit-test-root test))))))
 
 
 (provide 'phpunit-test)

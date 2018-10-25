@@ -25,6 +25,77 @@
   "Launch a `COMMAND'."
   (compile command))
 
+(defvar cerbere-backends '()
+  "The list of Cerbere backends.
+Each backend provide several method for unit testing.")
+
+(defun cerbere-backend-name (backend)
+  "Return BACKEND supported file extension."
+  (plist-get backend :name))
+
+(defun cerbere-add-backend (backend)
+  "Add BACKEND to the list of backends."
+  (add-to-list 'cerbere-backends backend))
+
+(defmacro cerbere-define-backend (name f-ext doc-string &rest props)
+  "Add a new backend for Cerbere.
+NAME is the backend name.
+
+F-EXT is the file extensions.
+
+DOC-STRING is the backend documentation.
+PROPS is a list of properties defining backend apis:
+
+`:run-test' should be a function that takes a test objects as
+argument and run it.
+
+`:test-at-point' should be a function that returns an object
+identifing the test at cursor location or nil if there isn't.
+
+`:test-for-file' should be a function that returns an object
+identifing the test for the file associated to the current buffer
+or nil if there isn't.
+
+`:test-for-project' should be a function that returns an object
+identifing the test for the project associated to the current buffer
+or nil if there isn't.
+
+A test object is a property list.  It should contain at list one
+property: the name of your backend.  The other properties should
+tell you enough information to run the test.  The run test
+function should extract the needed information from the test
+object and execute the identifed test.
+
+\(cerbere-define-backend my-backend \"my-file-extension\"
+  \"My backend documentation.\"
+  :test-at-point (lamdba () '(:backend my-backend
+                              :file \"MyJavaTest.java\"
+                              :test \"testShouldFooBar\"))
+  :test-for-file (lambda () '(:backend my-backend
+                              :file \"MyJavaTest.java\"))
+  :test-for-project (lambda () '(:backend my-backend
+                                 :project \"/path/to/project\"))
+  :run-test (lamdba (test) #'my-backend-run-test))"
+  (declare (indent 2)
+           (doc-string 3))
+  (let* ((var-name (intern (format "cedere--backend-%s" name)))
+         (run-test (plist-get props :run-test))
+         (test-at-point (plist-get props :test-at-point))
+         (test-for-file (plist-get props :test-for-file))
+         (test-for-project (plist-get props :test-for-project)))
+    (unless run-test (error "Backend should define :run-test function"))
+    (unless test-at-point (error "Backend should define :test-at-point function"))
+    (unless test-for-file (error "Backend should define :test-for-file function"))
+    (unless test-for-project (error "Backend should define :test-for-project& function"))
+    `(progn
+       (if (boundp ',var-name) (makunbound ',var-name))
+       (defvar ,var-name (list :name (quote ,name)
+                               :f-ext ,f-ext
+                               :run-test ,run-test
+                               :test-at-point ,test-at-point
+                               :test-for-file ,test-for-file
+                               :test-for-project ,test-for-project))
+       (cerbere-add-backend ,var-name))))
 
 ;; (defun notify-compilation-result (buffer msg)
 ;;   "Notify that the compilation is finished,

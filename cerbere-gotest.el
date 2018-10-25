@@ -52,81 +52,92 @@
             ;;(go-test-get-root-directory)
             args))
 
-;; (defun cerbere--go-test-get-root-directory()
-;;   "Return the root directory to run tests."
-;;   (let ((filename (buffer-file-name)))
-;;     (when filename
-;;       (file-truename (or (locate-dominating-file filename "Makefile")
-;;                          "./")))))
+(defun cerbere--go-test-test-project ()
+  "Return the directory for the current file."
+  (file-name-directory (buffer-file-name)))
+
+(defun cerbere--go-test-test-root (test)
+  "Return the root directory for TEST."
+  (plist-get test :project))
+
+(defun cerbere--go-test-test-file (test)
+  "Return the file name for TEST."
+  (plist-get test :file))
+
+(defun cerbere--go-test-test-name (test)
+  "Return the test name for TEST."
+  (plist-get test :name))
+
 
 (defun cerbere--go-test-get-current-file (&optional file)
   "Return the filename of the go test for `FILE'."
-  (let* ((file (or file (buffer-file-name))))
-    (f-long (f-filename file))))
-
+  (file-name-nondirectory (buffer-file-name)))
 
 (defun cerbere--go-test-get-current-test ()
-  (let ((start (point))
-        test-name)
-    (save-excursion
-      (end-of-line)
-      (unless (and
-               (search-backward-regexp "^[[:space:]]*func[[:space:]]*Test" nil t)
-               (save-excursion (go-end-of-defun) (< start (point))))
-        (error "Unable to find a test"))
-      (save-excursion
-        (search-forward "Test")
-        (setq test-name (thing-at-point 'word))))
-    test-name))
+  (save-excursion
+    (end-of-line)
+    (when (re-search-backward "\\s-*func\\s-+\\(Test\\w+\\)" nil 't)
+      (let ((test-name (match-string 1)))
+        (set-text-properties 0 (length test-name) nil test-name)
+        test-name))))
 
+(defun cerbere--go-test-arguments (test)
+  "Return arguments for running TEST."
+  (let ((verbose (if cerbere-go-test-verbose " -v" ""))
+        (test-file (and test (plist-get test :file)))
+        (test-name (and test (plist-get test :test))))
+    (if test-name (format "%s -run %s" verbose test-name)
+      (if test-file (format "%s -file=%s" verbose test-file)
+        verbose))))
 
-(defun cerbere--go-test-arguments (args)
-  (let ((opts args))
-    (when cerbere-go-test-verbose
-      (setq opts (s-concat opts " -v")))
-    opts))
-
-
-(defun cerbere--go-test-run (args)
-  (cerbere--build (cerbere--go-test-get-program
-		   (cerbere--go-test-arguments args))))
-
+(defun cerbere--go-test-run (test)
+  "Run go TEST."
+  (let ((default-directory (cerbere--go-test-test-root test)))
+    (cerbere--build (cerbere--go-test-get-program
+		     (cerbere--go-test-arguments test)))))
 
 ; API
 ;; ----
 
+(defun cerbere--go-test-test-at-point ()
+  "Return the test at point.
 
-(defun cerbere-go-test-current-test ()
-  "Launch go test on curent test."
-  (interactive)
-  (let ((test-name (cerbere--go-test-get-current-test)))
-    (when test-name
-      (let ((args (s-concat " -run " test-name)))
-      (cerbere--go-test-run args)))))
+Return a proprety list containing the test name and the test class for
+the current buffer point, nil if there are no test."
+  (let ((name (cerbere--go-test-get-current-test)))
+    (when name
+      (list :backend 'go-test
+            :project (cerbere--go-test-test-project)
+            :file (cerbere--go-test-get-current-file)
+            :name (cerbere--go-test-get-current-test)))))
 
+(defun cerbere--go-test-test-for-file ()
+  "Return the test for the current buffer."
+  (save-excursion
+    (goto-char (point-max))
+    (let ((name (cerbere--go-test-get-current-test)))
+      (when name
+        (list :backend 'go-test
+              :project (cerbere--go-test-test-project)
+              :file (cerbere--go-test-get-current-file))))))
 
-(defun cerbere-go-test-current-file ()
-  "Launch go test on file."
-  (interactive)
-  (let ((args (s-concat " -file=" (cerbere--go-test-get-current-file))))
-    (cerbere--go-test-run args)))
+(defun cerbere--go-test-test-for-project ()
+  "Return the test for the current project."
+  (let ((root (cerbere--go-test-test-project)))
+    (when root
+      (list :backend 'go-test
+            :project root))))
 
+(defun cerbere--go-test-run-test (test)
+  "Launch Go-Test on `TEST'."
+  (cerbere--go-test-run test))
 
-(defun cerbere-go-test-current-project ()
-  "Launch go test on project."
-  (interactive)
-  (cerbere--go-test-run ""))
-
-
-;;; ###autoload
-(defun cerbere-go-test (command)
-  "Go lang backend."
-  (pcase command
-    (`test (cerbere-go-test-current-test))
-    (`file (cerbere-go-test-current-file))
-    (`project (cerbere-go-test-current-project))))
-
-;;(cerbere-add-backend "go" 'cerbere-go-test)
+(cerbere-define-backend go-test "go"
+  "Cerbere backend that runs go-test tests."
+  :run-test #'cerbere--go-test-run-test
+  :test-at-point #'cerbere--go-test-test-at-point
+  :test-for-file #'cerbere--go-test-test-for-file
+  :test-for-project #'cerbere--go-test-test-for-project)
 
 (provide 'cerbere-gotest)
 ;;; cerbere-gotest.el ends here

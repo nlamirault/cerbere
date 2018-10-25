@@ -27,9 +27,15 @@
     `(save-excursion
        (with-current-buffer (find-file-noselect
                              (concat cerbere-test-path "data/" ,file-name))
+  (declare (indent 1))
+  `(let ((file-path (concat cerbere-test-path "data/" ,file-name)))
+     (unless (file-exists-p file-path)
+       (error "File %s does not exists" file-path))
+     (save-excursion
+       (with-current-buffer (find-file-noselect file-path)
          (goto-char (point-min))
          ,@body
-         (kill-buffer))))
+         (kill-buffer)))))
 
 (provide 'test-helper)
 ;;; test-helper.el ends here

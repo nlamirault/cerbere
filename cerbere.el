@@ -55,50 +55,97 @@
 
 ;;; backends ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar cerbere-backends
-  '(("py" . cerbere-tox)
-    ("go" . cerbere-gotest)
-    ("php" . cerbere-phpunit))
-  "The list of Cerbere backends.
-Each backend provide several method for unit testing.")
+(defvar cerbere-last-test '() "The last executed test.")
 
-(defun cerbere-add-backend (f-ext name)
-  "Add a new backend for Cerbere.
-`F-EXT' is the file extensions.
-`NAME' is the backend name"
-  (push (cons f-ext name) cerbere-backends))
+(defun cerbere-backend-f-ext (backend)
+  "Return BACKEND supported file extension."
+  (plist-get backend :f-ext))
 
-(defun cerbere-find-backend (f-ext)
-  "Search a candidate into all available backends using `F-EXT'."
-  (message "ext: %s %s" f-ext cerbere-backends)
-  (assoc f-ext cerbere-backends))
+(defun cerbere-find-backend-by-ext (f-ext)
+  "Search a candidate into all available backends using F-EXT."
+  (seq-some (lambda (backend)
+              (when (equal f-ext (cerbere-backend-f-ext backend))
+                backend))
+            cerbere-backends))
 
-(defun cerbere-call-backend (name command)
-  "Call `BACKEND' with `NAME' using `COMMAND'."
-  (let ((backend (or (cerbere-find-backend name) (error "No such backend"))))
-    (funcall (cdr backend) command)))
+(defun cerbere-find-backend-by-name (name)
+  "Search backends for NAME."
+  (seq-some (lambda (backend)
+              (when (equal name (cerbere-backend-name backend))
+                backend))
+            cerbere-backends))
+
+(defun cerbere-backend-fun (backend context)
+  "Return the BACKEND function associated to CONTEXT."
+  (plist-get backend context))
 
 (defun cerbere-extract-file-ext ()
   "Extract file extension from current buffer."
-  (f-ext (buffer-file-name)))
+  (when buffer-file-name (file-name-extension buffer-file-name)))
+
+(defun cerbere-backend-call (context &rest arguments)
+  "Fetch backend for the current file and call CONTEXT with ARGUMENTS on it."
+  (let* ((backend (cerbere-find-backend-by-ext (cerbere-extract-file-ext)))
+         (fun (cerbere-backend-fun backend context)))
+    (when backend
+      (apply fun arguments))))
+
+;; Here we cannot use backend-call. We my want to run test even though we are
+;; not in a test buffer so we cannot use the current extension to find the
+;; backend. We have a test and they have the backend definition in them, use
+;; that.
+(defun cerbere-run-test (test)
+  "Run TEST and remember it."
+  (setq cerbere-last-test test)
+  (let ((backend (cerbere-find-backend-by-name (plist-get test :backend))))
+    (unless backend
+      (error "Unable to find backend %s" (plist-get test :backend)))
+    (funcall (cerbere-backend-fun backend :run-test) test)))
+
+(defun cerbere-fetch-test (context)
+  "Fetch test for current CONTEXT."
+  (cerbere-backend-call context))
+
+(defun cerbere-fetch-and-run-test (context)
+  "Run test for current CONTEXT."
+  (cerbere-run-test (cerbere-fetch-test context)))
+
+(defun cerbere-fetch-or-last-run-test (context)
+  "Run test for current CONTEXT or the last test if they are none."
+  (let ((test (or (cerbere-fetch-test context) cerbere-last-test)))
+    (if test (cerbere-run-test test)
+      (message "Cerbere did not find any test to run"))))
 
 ;;;###autoload
 (defun cerbere-current-test ()
   "Launch backend on current test."
   (interactive)
-  (cerbere-call-backend (cerbere-extract-file-ext) 'test))
+  (cerbere-fetch-and-run-test :test-at-point))
 
 ;;;###autoload
 (defun cerbere-current-file ()
   "Launch backend on current file."
   (interactive)
-  (cerbere-call-backend (cerbere-extract-file-ext) 'file))
+  (cerbere-fetch-and-run-test :test-for-file))
 
 ;;;###autoload
 (defun cerbere-current-project ()
   "Launch backend on current project."
   (interactive)
-  (cerbere-call-backend (cerbere-extract-file-ext) 'project))
+  (cerbere-fetch-and-run-test :test-for-project))
+
+;;;###autoload
+(defun cerbere-last-test ()
+  "Launch backend on the last test."
+  (interactive)
+  (if cerbere-last-test (cerbere-run-test cerbere-last-test)
+    (message "Cerbere did not find any last test to run")))
+
+;;;###autoload
+(defun cerbere-test-dwim ()
+  "Try to launch the test at point; if they are none, the test for project falling back on the last test ran."
+  (interactive)
+  (cerbere-fetch-or-last-run-test :test-at-point))
 
 ;;;###autoload
 (defun cerbere-version ()
@@ -107,7 +154,6 @@ Each backend provide several method for unit testing.")
   ;;(message "Cerbere version: %s" cerbere-package-version)
   (let ((version (pkg-info-version-info 'cerbere)))
     (message "Cerbere %s" version)))
-
 
 ;;; Mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -118,6 +164,8 @@ Each backend provide several method for unit testing.")
       (define-key prefix-map (kbd "t") 'cerbere-current-test)
       (define-key prefix-map (kbd "f") 'cerbere-current-file)
       (define-key prefix-map (kbd "p") 'cerbere-current-project)
+      (define-key prefix-map (kbd "l") 'cerbere-last-test)
+      (define-key prefix-map (kbd "d") 'cerbere-dwim)
       (define-key map cerbere-keymap-prefix prefix-map))
     map)
   "Keymap used by `cerbere-mode'..")
@@ -147,7 +195,6 @@ Each backend provide several method for unit testing.")
   "Turn off `cerbere-mode'."
   (interactive)
   (cerbere-mode -1))
-
 
 (provide 'cerbere)
 ;;; cerbere.el ends here
