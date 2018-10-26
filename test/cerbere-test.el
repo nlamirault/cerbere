@@ -41,6 +41,7 @@
   (should (equal "A B C D" (cerbere-command "A" '(B C) nil 'D))))
 
 (defvar cerbere-fake-backend-ran-test '() "The last test run by the fake backend.")
+(defvar cerbere-fake-backend-verbose '() "Set to t if the last test was run verbose.")
 
 (defmacro cerbere-with-fake-test-buffer (&rest body)
   "Setup a fake buffer and return `TEST' when asked when executing BODY."
@@ -48,10 +49,12 @@
   `(save-excursion
      (with-temp-buffer
        (let ((buffer-file-name "test.fake")
-             (old-backends cerbere-backends))
+             (old-backends cerbere-backends)
+             (cerbere-fake-backend-verbose nil))
          (cerbere-define-backend fake "fake"
            "Test backend."
-           :run-test (lambda (test) (setq cerbere-fake-backend-ran-test test))
+           :run-test (lambda (test verbose) (setq cerbere-fake-backend-ran-test test
+                                                  cerbere-fake-backend-verbose verbose))
            :test-at-point (lambda () '(:backend fake :context test-at-point))
            :test-for-file (lambda () '(:backend fake :context test-for-file))
            :test-for-project (lambda () '(:backend fake :context test-for-project)))
@@ -69,7 +72,7 @@
 
 (ert-deftest test-cerbere-backend-call-should-call-backend-fun ()
   (cerbere-with-fake-test-buffer
-    (cerbere-backend-call :run-test 'foobar)
+    (cerbere-backend-call :run-test 'foobar nil)
     (should (equal 'foobar cerbere-fake-backend-ran-test))))
 
 (ert-deftest test-cerbere-run-test-should-call-run-and-save-test ()
@@ -92,8 +95,9 @@
 
 (ert-deftest test-cerbere-current-test ()
   (cerbere-with-fake-test-buffer
-    (cerbere-current-test)
-    (should (equal 'test-at-point (plist-get cerbere-fake-backend-ran-test :context)))))
+    (cerbere-current-test t)
+    (should (equal 'test-at-point (plist-get cerbere-fake-backend-ran-test :context)))
+    (should cerbere-fake-backend-verbose)))
 
 (ert-deftest test-cerbere-current-file ()
   (cerbere-with-fake-test-buffer

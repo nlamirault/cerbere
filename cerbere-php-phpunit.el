@@ -94,8 +94,8 @@
     (when (re-search-backward cerbere--php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
 
-(defun cerbere--php-phpunit-arguments (args)
-  "Append options to ARGS given package configuration."
+(defun cerbere--php-phpunit-arguments (args &optional verbose)
+  "Append options to ARGS given package configuration, possibly adding VERBOSE."
   (let ((opts args))
      (when cerbere-php-phpunit-stop-on-error
        (setq opts (concat opts " --stop-on-error")))
@@ -103,7 +103,7 @@
        (setq opts (concat opts " --stop-on-failure")))
      (when cerbere-php-phpunit-stop-on-skipped
        (setq opts (concat opts " --stop-on-skipped")))
-     (when cerbere-php-phpunit-verbose-mode
+     (when (or cerbere-php-phpunit-verbose-mode verbose)
        (setq opts (concat opts " --verbose")))
      opts))
 
@@ -116,12 +116,12 @@
                 (if test-name (format "::%s" test-name) ""))
       "")))
 
-(defun cerbere--php-phpunit-run (test)
-  "Run `TEST'."
+(defun cerbere--php-phpunit-run (test &optional verbose)
+  "Run `TEST', possibly being more VERBOSE."
   (cerbere--build
    (cerbere--php-phpunit-get-program
     (cerbere--php-phpunit-test-root test)
-    (cerbere--php-phpunit-arguments (cerbere--php-phpunit-test-args test)))))
+    (cerbere--php-phpunit-arguments (cerbere--php-phpunit-test-args test) verbose))))
 
 (defun cerbere--php-phpunit-test-at-point ()
   "Return the test at point.
@@ -152,9 +152,9 @@ the current buffer point, nil if there are no test."
       (list :backend 'php-phpunit
             :project root))))
 
-(defun cerbere--php-phpunit-run-test (test)
-  "Launch PHPUnit on `TEST'."
-  (cerbere--php-phpunit-run test))
+(defun cerbere--php-phpunit-run-test (test &optional verbose)
+  "Launch PHPUnit on `TEST', possibly being more VERBOSE."
+  (cerbere--php-phpunit-run test verbose))
 
 (cerbere-define-backend php-phpunit "php"
   "Cerbere backend that runs phpunit tests."

@@ -77,20 +77,20 @@ ARGS corresponds to go command line arguments."
         (set-text-properties 0 (length test-name) nil test-name)
         test-name))))
 
-(defun cerbere--go-test-arguments (test)
-  "Return arguments for running TEST."
-  (let ((verbose (if cerbere-go-test-verbose " -v" ""))
+(defun cerbere--go-test-arguments (test &optional verbose)
+  "Return arguments for running TEST, possibly being more VERBOSE."
+  (let ((verbose (if (or cerbere-go-test-verbose verbose) " -v" ""))
         (test-file (and test (plist-get test :file)))
         (test-name (and test (plist-get test :test))))
     (if test-name (format "%s -run %s" verbose test-name)
       (if test-file (format "%s -file=%s" verbose test-file)
         verbose))))
 
-(defun cerbere--go-test-run (test)
-  "Run go TEST."
+(defun cerbere--go-test-run (test &optional verbose)
+  "Run go TEST, possibly being more VERBOSE."
   (let ((default-directory (cerbere--go-test-test-root test)))
     (cerbere--build (cerbere--go-test-get-program
-		     (cerbere--go-test-arguments test)))))
+		     (cerbere--go-test-arguments test verbose)))))
 
 ; API
 ;; ----
@@ -124,9 +124,9 @@ the current buffer point, nil if there are no test."
       (list :backend 'go-test
             :project root))))
 
-(defun cerbere--go-test-run-test (test)
-  "Launch Go-Test on `TEST'."
-  (cerbere--go-test-run test))
+(defun cerbere--go-test-run-test (test &optional verbose)
+  "Launch Go-Test on `TEST', possibly being more VERBOSE."
+  (cerbere--go-test-run test verbose))
 
 (cerbere-define-backend go-test "go"
   "Cerbere backend that runs go-test tests."

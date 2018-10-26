@@ -93,58 +93,66 @@
 ;; not in a test buffer so we cannot use the current extension to find the
 ;; backend. We have a test and they have the backend definition in them, use
 ;; that.
-(defun cerbere-run-test (test)
-  "Run TEST and remember it."
+(defun cerbere-run-test (test &optional verbose)
+  "Run TEST, possibly being more VERBOSE, and remember it."
   (setq cerbere-last-test test)
   (let ((backend (cerbere-find-backend-by-name (plist-get test :backend))))
     (unless backend
       (error "Unable to find backend %s" (plist-get test :backend)))
-    (funcall (cerbere-backend-fun backend :run-test) test)))
+    (funcall (cerbere-backend-fun backend :run-test) test verbose)))
 
 (defun cerbere-fetch-test (context)
   "Fetch test for current CONTEXT."
   (cerbere-backend-call context))
 
-(defun cerbere-fetch-and-run-test (context)
-  "Run test for current CONTEXT."
-  (cerbere-run-test (cerbere-fetch-test context)))
+(defun cerbere-fetch-and-run-test (context &optional verbose)
+  "Run test for current CONTEXT, maybe being VERBOSE."
+  (cerbere-run-test (cerbere-fetch-test context) verbose))
 
-(defun cerbere-fetch-or-last-run-test (context)
-  "Run test for current CONTEXT or the last test if they are none."
+(defun cerbere-fetch-or-last-run-test (context &optional verbose)
+  "Run test for current CONTEXT or the last test if they are none.
+
+The test will be run verbosely if VERBOSE is not nil."
   (let ((test (or (cerbere-fetch-test context) cerbere-last-test)))
-    (if test (cerbere-run-test test)
+    (if test (cerbere-run-test test verbose)
       (message "Cerbere did not find any test to run"))))
 
 ;;;###autoload
-(defun cerbere-current-test ()
-  "Launch backend on current test."
-  (interactive)
-  (cerbere-fetch-and-run-test :test-at-point))
+(defun cerbere-current-test (&optional verbose)
+  "Launch backend on current test, maybe being VERBOSE."
+  (interactive "P")
+  (cerbere-fetch-and-run-test :test-at-point verbose))
 
 ;;;###autoload
-(defun cerbere-current-file ()
-  "Launch backend on current file."
-  (interactive)
-  (cerbere-fetch-and-run-test :test-for-file))
+(defun cerbere-current-file (&optional verbose)
+  "Launch backend on current file, maybe being VERBOSE.."
+  (interactive "P")
+  (cerbere-fetch-and-run-test :test-for-file verbose))
 
 ;;;###autoload
-(defun cerbere-current-project ()
-  "Launch backend on current project."
-  (interactive)
-  (cerbere-fetch-and-run-test :test-for-project))
+(defun cerbere-current-project (&optional verbose)
+  "Launch backend on current project, maybe being VERBOSE.."
+  (interactive "P")
+  (cerbere-fetch-and-run-test :test-for-project verbose))
 
 ;;;###autoload
-(defun cerbere-last-test ()
-  "Launch backend on the last test."
-  (interactive)
-  (if cerbere-last-test (cerbere-run-test cerbere-last-test)
+(defun cerbere-last-test (&optional verbose)
+  "Launch backend on the last test, maybe being VERBOSE.."
+  (interactive "P")
+  (if cerbere-last-test (cerbere-run-test cerbere-last-test verbose)
     (message "Cerbere did not find any last test to run")))
 
 ;;;###autoload
-(defun cerbere-test-dwim ()
-  "Try to launch the test at point; if they are none, the test for project falling back on the last test ran."
-  (interactive)
-  (cerbere-fetch-or-last-run-test :test-at-point))
+(defun cerbere-test-dwim (&optional verbose)
+  "Try to launch the test at point or the last executed test.
+
+This will check if the cursor is currently in a test function
+definition.  If so it will run that test.  If there are no test
+definition, it will run the last executed test.
+
+The test will be run verbosely if VERBOSE is not nil."
+  (interactive "P")
+  (cerbere-fetch-or-last-run-test :test-at-point verbose))
 
 ;;;###autoload
 (defun cerbere-version ()
