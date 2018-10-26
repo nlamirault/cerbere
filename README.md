@@ -56,7 +56,7 @@ dependencies management. Install it and retrieve dependencies :
 
 Launch unit tests :
 
-    $ make clean test
+    $ cask exec ert-runner
 
 
 ## Support / Contribute

@@ -21,12 +21,14 @@
 
 ;;; Code:
 
+(require 'f)
+
+(defvar cerbere-test-path (file-name-as-directory (f-dirname (f-this-file))) "The test path.")
+(defvar cerbere-root-path (file-name-as-directory (f-parent cerbere-test-path)) "The root path.")
+(add-to-list 'load-path cerbere-root-path)
+
 (defmacro cerbere-with-test-content (file-name &rest body)
   "Setup a buffer backing FILE-NAME with CONTENT and run BODY in it."
-    (declare (indent 1))
-    `(save-excursion
-       (with-current-buffer (find-file-noselect
-                             (concat cerbere-test-path "data/" ,file-name))
   (declare (indent 1))
   `(let ((file-path (concat cerbere-test-path "data/" ,file-name)))
      (unless (file-exists-p file-path)
