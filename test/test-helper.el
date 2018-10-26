@@ -21,10 +21,13 @@
 
 ;;; Code:
 
-(require 'f)
-
-(defvar cerbere-test-path (file-name-as-directory (f-dirname (f-this-file))) "The test path.")
-(defvar cerbere-root-path (file-name-as-directory (f-parent cerbere-test-path)) "The root path.")
+(defconst cerbere-test-path (file-name-as-directory
+                             (file-name-directory (or load-file-name buffer-file-name)))
+  "The test directory.")
+(defconst cerbere-root-path (file-name-as-directory
+                             (file-name-directory
+                              (directory-file-name cerbere-test-path)))
+  "The cerbere project root path.")
 (add-to-list 'load-path cerbere-root-path)
 
 (defmacro cerbere-with-test-content (file-name &rest body)

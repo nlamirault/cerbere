@@ -14,8 +14,6 @@
 ;; Development
 (development
  (depends-on "cask")
- (depends-on "s")
- (depends-on "f")
  (depends-on "go-mode")
  (depends-on "pkg-info")
  (depends-on "python")

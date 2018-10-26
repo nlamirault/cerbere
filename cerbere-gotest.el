@@ -19,8 +19,6 @@
 
 ;;; Code:
 
-(require 's)
-(require 'f)
 (require 'go-mode)
 
 
@@ -48,7 +46,7 @@
 (defun cerbere--go-test-get-program (args)
   "Return the command to launch unit test.
 `ARGS' corresponds to go command line arguments."
-  (s-concat go-command " test "
+  (concat go-command " test "
             ;;(go-test-get-root-directory)
             args))
 

@@ -25,7 +25,7 @@
 (require 'test-helper)
 
 (defun phpunit-command (&rest arg)
-  (apply 's-concat "phpunit -c " "phpunit.xml" arg))
+  (apply 'concat "phpunit -c " "phpunit.xml" arg))
 
 ;; cerbere-phpunit Mode
 

@@ -18,10 +18,6 @@
 
 ;;; Code:
 
-
-(require 's)
-(require 'f)
-
 (require 'cerbere-common)
 
 (defgroup cerbere-phpunit nil
@@ -89,12 +85,12 @@
 (defun cerbere--phpunit-get-program (root args)
   "Return the command to launch unit test in ROOT using ARGS.
 `ARGS' corresponds to phpunit command line arguments."
-  (s-concat cerbere--phpunit-program " -c " root "phpunit.xml" args))
+  (concat cerbere--phpunit-program " -c " root "phpunit.xml" args))
 
 (defun cerbere--phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
-    (f-filename (replace-regexp-in-string "\\.php\\'" "" file))))
+    (file-name-nondirectory (directory-file-name (replace-regexp-in-string "\\.php\\'" "" file)))))
 
 
 (defun cerbere--phpunit-get-current-test ()
@@ -105,13 +101,13 @@
 (defun cerbere--phpunit-arguments (args)
   (let ((opts args))
      (when cerbere-phpunit-stop-on-error
-       (setq opts (s-concat opts " --stop-on-error")))
+       (setq opts (concat opts " --stop-on-error")))
      (when cerbere-phpunit-stop-on-failure
-       (setq opts (s-concat opts " --stop-on-failure")))
+       (setq opts (concat opts " --stop-on-failure")))
      (when cerbere-phpunit-stop-on-skipped
-       (setq opts (s-concat opts " --stop-on-skipped")))
+       (setq opts (concat opts " --stop-on-skipped")))
      (when cerbere-phpunit-verbose-mode
-       (setq opts (s-concat opts " --verbose")))
+       (setq opts (concat opts " --verbose")))
      opts))
 
 (defun cerbere--phpunit-test-args (test)
