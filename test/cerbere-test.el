@@ -34,6 +34,12 @@
     (should (eql 'cerbere-current-project
                  (key-binding (kbd "C-c c p"))))))
 
+(ert-deftest test-cerbere-command ()
+  (should (equal "A B C D" (cerbere-command "A" nil "B" nil "C" nil "D" nil)))
+  (should (equal "A B C D" (cerbere-command 'A nil 'B nil `C nil (quote D) nil)))
+  (should (equal "\\^b\\$" (cerbere-command '^b$)))
+  (should (equal "A B C D" (cerbere-command "A" '(B C) nil 'D))))
+
 (defvar cerbere-fake-backend-ran-test '() "The last test run by the fake backend.")
 
 (defmacro cerbere-with-fake-test-buffer (&rest body)

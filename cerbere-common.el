@@ -19,10 +19,6 @@
 
 ;;; Code:
 
-(defun cerbere--build (command)
-  "Launch a `COMMAND'."
-  (compile command))
-
 (defvar cerbere-backends '()
   "The list of Cerbere backends.
 Each backend provide several method for unit testing.")
@@ -94,6 +90,40 @@ object and execute the identifed test.
                                :test-for-file ,test-for-file
                                :test-for-project ,test-for-project))
        (cerbere-add-backend ,var-name))))
+
+;; shamelessly stolen from dash.
+(defun cerbere-flatten (l)
+  "Take a nested list L and return its contents as a single, flat list.
+
+Note that because nil represents a list of zero elements (an
+empty list), any mention of nil in L will disappear after
+flattening.  If you need to preserve nils, consider `-flatten-n'
+or map them to some unique symbol and then map them back.
+
+Conses of two atoms are considered \"terminals\", that is, they
+aren't flattened further."
+  (declare (pure t) (side-effect-free t))
+  (if (and (listp l) (listp (cdr l)))
+      (seq-mapcat #'cerbere-flatten l)
+    (list l)))
+
+(defun cerbere--build (command)
+  "Launch a COMMAND."
+  (compile command))
+
+(defun cerbere-build (directory command)
+  "Change to DIRECTORY and run COMMAND."
+  (let ((default-directory directory))
+    (cerbere--build command)))
+
+(defun cerbere-shell-arg (arg)
+  "Return a string representation of ARG suitable for use in a shell command."
+  (shell-quote-argument (with-output-to-string (princ arg))))
+
+(defun cerbere-command (&rest args)
+  "Remove nils from ARGS and join all its remaining elemts with a space."
+  (declare (indent 0))
+  (string-join (seq-map #'cerbere-shell-arg (cerbere-flatten args)) " "))
 
 (provide 'cerbere-common)
 ;;; cerbere-common.el ends here
