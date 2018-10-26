@@ -125,5 +125,15 @@ aren't flattened further."
   (declare (indent 0))
   (string-join (seq-map #'cerbere-shell-arg (cerbere-flatten args)) " "))
 
+(defun cerbere-buffer-file-name ()
+  "Return the basename of the file associated to the current buffer."
+  (file-name-nondirectory buffer-file-name))
+
+(defun cerbere-project-root (file)
+  "Locate current project root by looking up for FILE."
+  (let ((root (locate-dominating-file (buffer-file-name) file)))
+    (when root
+        (file-name-as-directory (file-name-directory (expand-file-name root))))))
+
 (provide 'cerbere-common)
 ;;; cerbere-common.el ends here
