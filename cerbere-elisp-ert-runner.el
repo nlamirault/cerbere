@@ -36,10 +36,7 @@
 
 (defun cerbere-elisp-ert-runner-find-project ()
   "Return the root of this Cask project."
-  (file-name-as-directory
-   (file-name-directory
-    (expand-file-name
-     (locate-dominating-file (buffer-file-name) "Cask")))))
+  (cerbere-project-root "Cask"))
 
 (defun cerbere-elisp-ert-runner-test-root (test)
   "Return the Cask directory for TEST."
@@ -53,14 +50,14 @@
   "Return commond to run TEST, possibly being more VERBOSE."
   (let ((pattern (cerbere-elisp-ert-runner-test-pattern test)))
     (cerbere-command
-      cerbere-elisp-ert-runner-cask 'exec 'ert
+      cerbere-elisp-ert-runner-cask 'exec 'ert-runner
       (and verbose '--verbose)
       (and pattern `(--pattern ,pattern)))))
 
-(defun cerbere-elisp-ert-runner-run (test &optional verbose)
+(defun cerbere-elisp-ert-runner-run-test (test &optional verbose)
   "Run TEST, possibly being more VERBOSE."
-  (cerbere-build (default-directory (cerbere-elisp-ert-runner-test-root test))
-                 (cerbere-elisp-ert-runner-comnmand test verbose)))
+  (cerbere-build (cerbere-elisp-ert-runner-test-root test)
+                 (cerbere-elisp-ert-runner-command test verbose)))
 
 (defun cerbere-elisp-ert-runner-sexp-at-point ()
   "Return current test at point."
@@ -94,7 +91,14 @@
   (let ((project (cerbere-elisp-ert-runner-find-project)))
     (when project
       (list :backend 'elisp-ert-runner
-            :project (cerbere-elisp-ert-runner-find-project)))))
+            :project project))))
+
+(cerbere-define-backend elisp-ert-runner "el"
+  "Cerbere backend that runs Emacs lips ert runner tests."
+  :run-test #'cerbere-elisp-ert-runner-run-test
+  :test-at-point #'cerbere-elisp-ert-runner-test-at-point
+  :test-for-file #'cerbere-elisp-ert-runner-test-for-file
+  :test-for-project #'cerbere-elisp-ert-runner-test-for-project)
 
 (provide 'cerbere-elisp-ert-runner)
 

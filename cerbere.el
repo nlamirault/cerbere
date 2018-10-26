@@ -3,7 +3,7 @@
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;; URL: https://github.com/nlamirault/cerbere
 ;; Version: 0.1.0
-;; Keywords: python, go, php, tests, tdd
+;; Keywords: python, go, php, phpunit, elisp, ert, tests, tdd
 
 ;; Package-Requires: ((pkg-info "0.5"))
 
@@ -34,6 +34,7 @@
 (with-eval-after-load 'php-mode (require 'cerbere-php-phpunit))
 (with-eval-after-load 'go-mode (require 'cerbere-go-test))
 (with-eval-after-load 'python (require 'cerbere-python-tox))
+(with-eval-after-load 'elisp-mode (require 'cerbere-elisp-ert-runner))
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
