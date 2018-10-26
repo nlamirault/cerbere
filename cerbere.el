@@ -31,10 +31,9 @@
 ;; Project dependencies
 (require 'cerbere-common)
 
-(require 'cerbere-php-phpunit)
-(eval-after-load "go-mode" '(require 'cerbere-go-test))
-(eval-after-load "python" '(require 'cerbere-python-tox))
-
+(with-eval-after-load 'php-mode (require 'cerbere-php-phpunit))
+(with-eval-after-load 'go-mode (require 'cerbere-go-test))
+(with-eval-after-load 'python (require 'cerbere-python-tox))
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
