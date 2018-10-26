@@ -59,10 +59,6 @@
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(test\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
 
-
-;; Commands
-;; -----------
-
 (defun cerbere--php-phpunit-test-root (test)
   "Return the root directory for TEST."
   (plist-get test :project))
@@ -76,7 +72,7 @@
   (plist-get test :name))
 
 (defun cerbere--php-phpunit-get-root-directory ()
-  "Return the root directory to run tests."
+  "Return the project root directory."
   (let ((filename (buffer-file-name)))
     (when filename
       (file-truename (or (locate-dominating-file filename "phpunit.xml")
@@ -99,6 +95,7 @@
       (match-string-no-properties 1))))
 
 (defun cerbere--php-phpunit-arguments (args)
+  "Append options to ARGS given package configuration."
   (let ((opts args))
      (when cerbere-php-phpunit-stop-on-error
        (setq opts (concat opts " --stop-on-error")))
@@ -125,9 +122,6 @@
    (cerbere--php-phpunit-get-program
     (cerbere--php-phpunit-test-root test)
     (cerbere--php-phpunit-arguments (cerbere--php-phpunit-test-args test)))))
-
-;; API
-;; ----
 
 (defun cerbere--php-phpunit-test-at-point ()
   "Return the test at point.

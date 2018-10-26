@@ -21,24 +21,17 @@
 
 ;;; Code:
 
-
 (require 'cerbere)
 (require 'cerbere-go-test)
 
-(defun go-test-command (&rest arg)
-  (apply 'concat "go test " arg))
-
-
-
-;; cerbere-go-test
+(defun go-test-command (&rest args)
+  "Return the go test command for running with ARGS."
+  (apply 'concat "go test " args))
 
 (ert-deftest test-cerbere-go-test ()
   (with-temp-buffer
     (go-mode)
     (should (featurep 'cerbere-go-test))))
-
-
-;; Arguments
 
 (ert-deftest test-go-test-get-program-without-args ()
   (should (string= (go-test-command)
@@ -86,5 +79,4 @@
       (should-not (cerbere--go-test-test-file test))
       (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))))
 
-(provide 'cerbere-go-test-test)
 ;;; cerbere-go-test-test.el ends here

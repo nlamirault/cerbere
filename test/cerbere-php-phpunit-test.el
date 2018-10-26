@@ -19,28 +19,20 @@
 
 ;;; Code:
 
-
 (require 'cerbere)
 (require 'cerbere-php-phpunit)
-(require 'test-helper)
 
-(defun phpunit-command (&rest arg)
-  (apply 'concat "phpunit -c " "phpunit.xml" arg))
-
-;; cerbere-php-phpunit Mode
+(defun phpunit-command (&rest args)
+  "Return the phpunit command with ARGS."
+  (apply 'concat "phpunit -c " "phpunit.xml" args))
 
 (ert-deftest test-cerbere-php-phpunit ()
   (with-temp-buffer
     (should (featurep 'cerbere-php-phpunit))))
 
-
-;;
-
 (ert-deftest test-cerbere-php-phpunit-get-current-class ()
   (should (string= "PhpUnitTest"
 		   (cerbere--php-phpunit-get-current-class "/tmp/foo/PhpUnitTest.php"))))
-
-;; Arguments
 
 (ert-deftest test-cerbere-php-phpunit-get-program-without-args ()
   (should (string= (phpunit-command)
@@ -116,5 +108,4 @@
       (should-not (cerbere--php-phpunit-test-class test))
       (should (equal (concat cerbere-test-data-path "php-phpunit/") (cerbere--php-phpunit-test-root test))))))
 
-(provide 'cerbere-php-phpunit-test)
 ;;; cerbere-php-phpunit-test.el ends here

@@ -24,12 +24,8 @@
 
 ;;; Code:
 
-(require 'python)
-
 (require 'cerbere-common)
-
-
-;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'python)
 
 (defgroup cerbere-python-tox nil
   "Tox back-end for Cerbere."
@@ -49,8 +45,6 @@
   "Default argument for Tox."
   :type 'string
   :group 'cerbere-python-tox)
-
-;;; Commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun cerbere--python-tox-read-python-tox-ini-envlist()
   "Read the tox.ini file and grab the environement list."
@@ -75,7 +69,7 @@
     envlist))
 
 (defun cerbere--python-tox-get-root-directory()
-  "Return the root directory to run tests."
+  "Return the root directory to run test cases."
   (file-truename (or (locate-dominating-file
                       (buffer-file-name) "tox.ini")
                      "./")))
@@ -90,7 +84,7 @@
                   (length (cerbere--python-tox-get-root-directory))))))
 
 (defun cerbere--python-tox-get-command (tox-test &optional envlist)
-  "Return the command to launch tests."
+  "Return the command to launch TOX-TEST with ENVLIST."
     (concat
      cerbere--python-tox-program " "
      cerbere--python-tox-arg " "

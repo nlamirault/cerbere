@@ -21,8 +21,6 @@
 
 (require 'cerbere)
 
-;; cerbere-python-tox mode
-
 (ert-deftest test-cerbere-python-tox ()
   (cerbere-with-test-content "python-tox/tests/test_weighted_indegree.py"
     (python-mode)
@@ -33,6 +31,4 @@
 ;;   (should (string= "FooTestCase"
 ;;  		   (cerbere--python-tox-current-class))))
 
-
-(provide 'cerbere-python-tox-test)
 ;;; cerbere-python-tox-test.el ends here

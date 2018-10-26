@@ -19,11 +19,8 @@
 
 ;;; Code:
 
-(require 'go-mode)
-
-
 (require 'cerbere-common)
-
+(require 'go-mode)
 
 (defgroup cerbere-go nil
   "Golang back-end for Cerbere."
@@ -45,7 +42,7 @@
 
 (defun cerbere--go-test-get-program (args)
   "Return the command to launch unit test.
-`ARGS' corresponds to go command line arguments."
+ARGS corresponds to go command line arguments."
   (concat go-command " test "
             ;;(go-test-get-root-directory)
             args))
@@ -72,6 +69,7 @@
   (file-name-nondirectory (buffer-file-name)))
 
 (defun cerbere--go-test-get-current-test ()
+  "Return the test name at current point."
   (save-excursion
     (end-of-line)
     (when (re-search-backward "\\s-*func\\s-+\\(Test\\w+\\)" nil 't)

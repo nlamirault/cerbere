@@ -22,7 +22,6 @@
 
 (require 'cerbere)
 
-
 (ert-deftest test-cerbere-go-keybindings ()
   (with-temp-buffer
     (cerbere-mode)
@@ -36,7 +35,6 @@
                  (key-binding (kbd "C-c c p"))))))
 
 (defvar cerbere-fake-backend-ran-test '() "The last test run by the fake backend.")
-
 
 (defmacro cerbere-with-fake-test-buffer (&rest body)
   "Setup a fake buffer and return `TEST' when asked when executing BODY."
