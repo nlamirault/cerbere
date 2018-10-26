@@ -23,7 +23,7 @@
 
 
 (require 'cerbere)
-(require 'cerbere-gotest)
+(require 'cerbere-go-test)
 
 (defun go-test-command (&rest arg)
   (apply 'concat "go test " arg))
@@ -35,7 +35,7 @@
 (ert-deftest test-cerbere-go-test ()
   (with-temp-buffer
     (go-mode)
-    (should (featurep 'cerbere-gotest))))
+    (should (featurep 'cerbere-go-test))))
 
 
 ;; Arguments
@@ -86,5 +86,5 @@
       (should-not (cerbere--go-test-test-file test))
       (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))))
 
-(provide 'gotest-test)
+(provide 'cerbere-go-test-test)
 ;;; cerbere-go-test-test.el ends here

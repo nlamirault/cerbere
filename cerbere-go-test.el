@@ -1,4 +1,4 @@
-;;; cerbere-gotest.el --- Launch GO unit tests
+;;; cerbere-go-test.el --- Launch GO unit tests
 
 ;; Copyright (C) 2014 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -137,5 +137,5 @@ the current buffer point, nil if there are no test."
   :test-for-file #'cerbere--go-test-test-for-file
   :test-for-project #'cerbere--go-test-test-for-project)
 
-(provide 'cerbere-gotest)
-;;; cerbere-gotest.el ends here
+(provide 'cerbere-go-test)
+;;; cerbere-go-test.el ends here

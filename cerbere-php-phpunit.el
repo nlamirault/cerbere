@@ -1,4 +1,4 @@
-;;; cerbere-phpunit.el --- Launch PHP unit tests using phpunit
+;;; cerbere-php-phpunit.el --- Launch PHP unit tests using phpunit
 
 ;; Copyright (C) 2014  Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -20,39 +20,39 @@
 
 (require 'cerbere-common)
 
-(defgroup cerbere-phpunit nil
+(defgroup cerbere-php-phpunit nil
   "PHPUnit utility"
   :group 'cerbere)
 
-(defcustom cerbere--phpunit-program "phpunit"
+(defcustom cerbere--php-phpunit-program "phpunit"
   "PHPUnit binary path."
   :type 'file
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
 (defcustom phpunit-arg ""
   "Argument to pass to phpunit."
   :type 'string
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
-(defcustom cerbere-phpunit-stop-on-error nil
+(defcustom cerbere-php-phpunit-stop-on-error nil
   "Stop execution upon first error."
   :type 'boolean
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
-(defcustom cerbere-phpunit-stop-on-failure nil
+(defcustom cerbere-php-phpunit-stop-on-failure nil
   "Stop execution upon first error or failure."
   :type 'boolean
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
-(defcustom cerbere-phpunit-stop-on-skipped nil
+(defcustom cerbere-php-phpunit-stop-on-skipped nil
   "Stop execution upon first skipped test."
   :type 'boolean
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
-(defcustom cerbere-phpunit-verbose-mode nil
+(defcustom cerbere-php-phpunit-verbose-mode nil
   "Display debugging information during test execution."
   :type 'boolean
-  :group 'cerbere-phpunit)
+  :group 'cerbere-php-phpunit)
 
 
 (defconst cerbere--php-beginning-of-defun-regexp
@@ -63,54 +63,54 @@
 ;; Commands
 ;; -----------
 
-(defun cerbere--phpunit-test-root (test)
+(defun cerbere--php-phpunit-test-root (test)
   "Return the root directory for TEST."
   (plist-get test :project))
 
-(defun cerbere--phpunit-test-class (test)
+(defun cerbere--php-phpunit-test-class (test)
   "Return the class name for TEST."
   (plist-get test :class))
 
-(defun cerbere--phpunit-test-name (test)
+(defun cerbere--php-phpunit-test-name (test)
   "Return the test name for TEST."
   (plist-get test :name))
 
-(defun cerbere--phpunit-get-root-directory ()
+(defun cerbere--php-phpunit-get-root-directory ()
   "Return the root directory to run tests."
   (let ((filename (buffer-file-name)))
     (when filename
       (file-truename (or (locate-dominating-file filename "phpunit.xml")
 			 (file-name-directory filename))))))
 
-(defun cerbere--phpunit-get-program (root args)
+(defun cerbere--php-phpunit-get-program (root args)
   "Return the command to launch unit test in ROOT using ARGS.
 `ARGS' corresponds to phpunit command line arguments."
-  (concat cerbere--phpunit-program " -c " root "phpunit.xml" args))
+  (concat cerbere--php-phpunit-program " -c " root "phpunit.xml" args))
 
-(defun cerbere--phpunit-get-current-class (&optional file)
+(defun cerbere--php-phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
     (file-name-nondirectory (directory-file-name (replace-regexp-in-string "\\.php\\'" "" file)))))
 
 
-(defun cerbere--phpunit-get-current-test ()
+(defun cerbere--php-phpunit-get-current-test ()
   (save-excursion
     (when (re-search-backward cerbere--php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
 
-(defun cerbere--phpunit-arguments (args)
+(defun cerbere--php-phpunit-arguments (args)
   (let ((opts args))
-     (when cerbere-phpunit-stop-on-error
+     (when cerbere-php-phpunit-stop-on-error
        (setq opts (concat opts " --stop-on-error")))
-     (when cerbere-phpunit-stop-on-failure
+     (when cerbere-php-phpunit-stop-on-failure
        (setq opts (concat opts " --stop-on-failure")))
-     (when cerbere-phpunit-stop-on-skipped
+     (when cerbere-php-phpunit-stop-on-skipped
        (setq opts (concat opts " --stop-on-skipped")))
-     (when cerbere-phpunit-verbose-mode
+     (when cerbere-php-phpunit-verbose-mode
        (setq opts (concat opts " --verbose")))
      opts))
 
-(defun cerbere--phpunit-test-args (test)
+(defun cerbere--php-phpunit-test-args (test)
   "Return arguments for running `TEST'."
   (let ((test-class (and test (plist-get test :class)))
         (test-name (and test (plist-get test :test))))
@@ -119,55 +119,55 @@
                 (if test-name (format "::%s" test-name) ""))
       "")))
 
-(defun cerbere--phpunit-run (test)
+(defun cerbere--php-phpunit-run (test)
   "Run `TEST'."
   (cerbere--build
-   (cerbere--phpunit-get-program
-    (cerbere--phpunit-test-root test)
-    (cerbere--phpunit-arguments (cerbere--phpunit-test-args test)))))
+   (cerbere--php-phpunit-get-program
+    (cerbere--php-phpunit-test-root test)
+    (cerbere--php-phpunit-arguments (cerbere--php-phpunit-test-args test)))))
 
 ;; API
 ;; ----
 
-(defun cerbere--phpunit-test-at-point ()
+(defun cerbere--php-phpunit-test-at-point ()
   "Return the test at point.
 
 Return a proprety list containing the test name and the test class for
 the current buffer point, nil if there are no test."
-  (let ((name (cerbere--phpunit-get-current-test)))
+  (let ((name (cerbere--php-phpunit-get-current-test)))
     (when name
-      (list :backend 'phpunit
-            :project (cerbere--phpunit-get-root-directory)
-            :class (cerbere--phpunit-get-current-class)
-            :name (cerbere--phpunit-get-current-test)))))
+      (list :backend 'php-phpunit
+            :project (cerbere--php-phpunit-get-root-directory)
+            :class (cerbere--php-phpunit-get-current-class)
+            :name (cerbere--php-phpunit-get-current-test)))))
 
-(defun cerbere--phpunit-test-for-file ()
+(defun cerbere--php-phpunit-test-for-file ()
   "Return the test for the current buffer."
   (save-excursion
     (goto-char (point-max))
-    (let ((name (cerbere--phpunit-get-current-test)))
+    (let ((name (cerbere--php-phpunit-get-current-test)))
       (when name
-        (list :backend 'phpunit
-              :project (cerbere--phpunit-get-root-directory)
-              :class (cerbere--phpunit-get-current-class))))))
+        (list :backend 'php-phpunit
+              :project (cerbere--php-phpunit-get-root-directory)
+              :class (cerbere--php-phpunit-get-current-class))))))
 
-(defun cerbere--phpunit-test-for-project ()
+(defun cerbere--php-phpunit-test-for-project ()
   "Return the test for the current project."
-  (let ((root (cerbere--phpunit-get-root-directory)))
+  (let ((root (cerbere--php-phpunit-get-root-directory)))
     (when root
-      (list :backend 'phpunit
+      (list :backend 'php-phpunit
             :project root))))
 
-(defun cerbere--phpunit-run-test (test)
+(defun cerbere--php-phpunit-run-test (test)
   "Launch PHPUnit on `TEST'."
-  (cerbere--phpunit-run test))
+  (cerbere--php-phpunit-run test))
 
-(cerbere-define-backend phpunit "php"
+(cerbere-define-backend php-phpunit "php"
   "Cerbere backend that runs phpunit tests."
-  :run-test #'cerbere--phpunit-run-test
-  :test-at-point #'cerbere--phpunit-test-at-point
-  :test-for-file #'cerbere--phpunit-test-for-file
-  :test-for-project #'cerbere--phpunit-test-for-project)
+  :run-test #'cerbere--php-phpunit-run-test
+  :test-at-point #'cerbere--php-phpunit-test-at-point
+  :test-for-file #'cerbere--php-phpunit-test-for-file
+  :test-for-project #'cerbere--php-phpunit-test-for-project)
 
-(provide 'cerbere-phpunit)
-;;; cerbere-phpunit.el ends here
+(provide 'cerbere-php-phpunit)
+;;; cerbere-php-phpunit.el ends here

@@ -6,9 +6,9 @@
 (package-file "cerbere.el")
 
 (files "cerbere-common.el"
-       "cerbere-tox.el"
-       "cerbere-phpunit.el"
-       "cerbere-gotest.el"
+       "cerbere-python-tox.el"
+       "cerbere-php-phpunit.el"
+       "cerbere-go-test.el"
        "cerbere.el")
 
 ;; Development

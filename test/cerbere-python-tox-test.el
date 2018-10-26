@@ -1,4 +1,4 @@
-;;; cerbere-tox-test.el --- Unit tests for Cerbere Tox backend
+;;; cerbere-python-tox-test.el --- Unit tests for Cerbere Tox backend
 
 ;; Copyright (C) 2014  Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -21,18 +21,18 @@
 
 (require 'cerbere)
 
-;; cerbere-tox mode
+;; cerbere-python-tox mode
 
-(ert-deftest test-cerbere-tox ()
-  (cerbere-with-test-content "tox/tests/test_weighted_indegree.py"
+(ert-deftest test-cerbere-python-tox ()
+  (cerbere-with-test-content "python-tox/tests/test_weighted_indegree.py"
     (python-mode)
-    (should (featurep 'cerbere-tox))))
+    (should (featurep 'cerbere-python-tox))))
 
 
-;; (ert-deftest test-cerbere-tox-get-current-class ()
+;; (ert-deftest test-cerbere-python-tox-get-current-class ()
 ;;   (should (string= "FooTestCase"
-;;  		   (cerbere--tox-current-class))))
+;;  		   (cerbere--python-tox-current-class))))
 
 
-(provide 'cerbere-tox-test)
-;;; cerbere-tox-test.el ends here
+(provide 'cerbere-python-tox-test)
+;;; cerbere-python-tox-test.el ends here
