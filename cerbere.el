@@ -36,6 +36,7 @@
 (with-eval-after-load 'python (require 'cerbere-python-tox))
 (with-eval-after-load 'elisp-mode (require 'cerbere-elisp-ert-runner))
 (with-eval-after-load 'ruby-mode (require 'cerbere-ruby-minitest))
+(with-eval-after-load 'rust-mode (require 'cerbere-rust-libtest))
 
 ;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -9,3 +9,4 @@ cerbere-pkg.el
 packages/*
 TAGS
 .DS_STORE
+/test/data/rust-libtest/target/

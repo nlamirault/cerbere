@@ -21,6 +21,7 @@
  (depends-on "pkg-info")
  (depends-on "python")
  (depends-on "ruby-mode")
+ (depends-on "rust-mode")
  ;; unit tests
  (depends-on "ert")
  (depends-on "ert-runner"))
