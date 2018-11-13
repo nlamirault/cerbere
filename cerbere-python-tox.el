@@ -1,4 +1,4 @@
-;;; cerbere-tox.el --- Launch python tests with tox
+;;; cerbere-python-tox.el --- Launch python tests with tox
 
 ;; Copyright (C) 2013 Chmouel Boudjnah <chmouel@chmouel.com>
 ;; Copyright (C) 2014 Nicolas Lamirault <nicolas.lamirault@gmail.com>
@@ -24,35 +24,29 @@
 
 ;;; Code:
 
+(require 'cerbere-common)
 (require 'python)
 
-(require 'cerbere-common)
-
-
-;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defgroup cerbere-tox nil
+(defgroup cerbere-python-tox nil
   "Tox back-end for Cerbere."
   :group 'cerbere)
 
-(defcustom cerbere--tox-program "tox"
+(defcustom cerbere--python-tox-program "tox"
   "Tox binary path."
   :type 'string
-  :group 'cerbere-tox)
+  :group 'cerbere-python-tox)
 
-(defcustom cerbere--tox-arg ""
+(defcustom cerbere--python-tox-arg ""
   "Argument to pass to tox."
   :type 'string
-  :group 'cerbere-tox)
+  :group 'cerbere-python-tox)
 
-(defcustom cerbere--tox-default-env nil
+(defcustom cerbere--python-tox-default-env nil
   "Default argument for Tox."
   :type 'string
-  :group 'cerbere-tox)
+  :group 'cerbere-python-tox)
 
-;;; Commands ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun cerbere--tox-read-tox-ini-envlist()
+(defun cerbere--python-tox-read-python-tox-ini-envlist()
   "Read the tox.ini file and grab the environement list."
   (let ((tox-ini-file
          (concat (locate-dominating-file
@@ -74,103 +68,103 @@
                          (match-beginning 1)(match-end 1)) ","))))
     envlist))
 
-(defun cerbere--tox-get-root-directory()
-  "Return the root directory to run tests."
+(defun cerbere--python-tox-get-root-directory()
+  "Return the root directory to run test cases."
   (file-truename (or (locate-dominating-file
                       (buffer-file-name) "tox.ini")
                      "./")))
 
-(defun cerbere--tox-extract-path ()
+(defun cerbere--python-tox-extract-path ()
   "Extract python module from pathname."
   (subst-char-in-string
       ?/ ?.
       (file-name-sans-extension
        (substring (file-truename
                    (buffer-file-name))
-                  (length (cerbere--tox-get-root-directory))))))
+                  (length (cerbere--python-tox-get-root-directory))))))
 
-(defun cerbere--tox-get-command (tox-test &optional envlist)
-  "Return the command to launch tests."
+(defun cerbere--python-tox-get-command (tox-test &optional envlist)
+  "Return the command to launch TOX-TEST with ENVLIST."
     (concat
-     cerbere--tox-program " "
-     cerbere--tox-arg " "
+     cerbere--python-tox-program " "
+     cerbere--python-tox-arg " "
      (if envlist (concat "-e" envlist " "))
      tox-test))
 
 ;;; Public interface ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defmacro with-tox (current &optional askenvs &rest body)
+(defmacro with-python-tox (current &optional askenvs &rest body)
   "Macro which initialize environments variables to launch unit tests."
     `(let ((toxenvs (if ,askenvs
 			(completing-read
-			 "Tox Environement: " (cerbere--tox-read-tox-ini-envlist))
-		      cerbere--tox-default-env))
-	   (default-directory (cerbere--tox-get-root-directory))
+			 "Tox Environement: " (cerbere--python-tox-read-python-tox-ini-envlist))
+		      cerbere--python-tox-default-env))
+	   (default-directory (cerbere--python-tox-get-root-directory))
 	   (compilation-auto-jump-to-first-error nil)
 	   (compilation-scroll-output nil)
 	   (,current (python-info-current-defun)))
        ,@body))
 
 
-(defun cerbere--tox-current-test (&optional askenvs)
+(defun cerbere--python-tox-current-test (&optional askenvs)
   "Launch tox on current test.
 A prefix arg will ask for a env to use which is by default what
-specified in `cerbere--tox-default-env'."
+specified in `cerbere--python-tox-default-env'."
   (interactive "P")
-  (with-tox current askenvs
+  (with-python-tox current askenvs
      (unless current
        (error "No function at point"))
-     (cerbere--build (cerbere--tox-get-command
-		      (concat (cerbere--tox-extract-path) ":" current)
+     (cerbere--build (cerbere--python-tox-get-command
+		      (concat (cerbere--python-tox-extract-path) ":" current)
 		      toxenvs))))
 
-(defun cerbere--tox-current-class (&optional askenvs)
+(defun cerbere--python-tox-current-class (&optional askenvs)
   "Launch tox on current class.
 A prefix arg will ask for a env to use which is by default what
-specified in `cerbere--tox-default-env'."
+specified in `cerbere--python-tox-default-env'."
   (interactive "P")
-  (with-tox current askenvs
+  (with-python-tox current askenvs
      (if current
 	 (let ((current-class (car (split-string current "\\."))))
-	   (cerbere--build (cerbere--tox-get-command
-			    (concat (cerbere--tox-extract-path) ":" current-class)
+	   (cerbere--build (cerbere--python-tox-get-command
+			    (concat (cerbere--python-tox-extract-path) ":" current-class)
 			    toxenvs)))
        (error "No class at point"))))
 
 
 ;; Not use in CERBERE.
 ;; FIXME: try to use it
-;; (defun cerbere--tox-current-module (&optional askenvs)
+;; (defun cerbere--python-tox-current-module (&optional askenvs)
 ;;   "Launch tox on current module.
 ;; A prefix arg will ask for a env to use which is by default what
-;; specified in `cerbere--tox-default-env'."
+;; specified in `cerbere--python-tox-default-env'."
 ;;   (interactive "P")
-;;   (with-tox current askenvs
+;;   (with-python-tox current askenvs
 ;;      (if current
-;; 	 (cerbere--build (cerbere--tox-get-command
-;;                          (cerbere--tox-extract-path) toxenvs)))))
+;; 	 (cerbere--build (cerbere--python-tox-get-command
+;;                          (cerbere--python-tox-extract-path) toxenvs)))))
 
 
-(defun cerbere--tox-current-project (&optional askenvs)
+(defun cerbere--python-tox-current-project (&optional askenvs)
   "Launch tox on current project.
 A prefix arg will ask for a env to use which is by default what
-specified in `cerbere--tox-default-env'."
+specified in `cerbere--python-tox-default-env'."
   (interactive "P")
-  (with-tox current askenvs
+  (with-python-tox current askenvs
      (if current
-	 (cerbere--build (cerbere--tox-get-command "" toxenvs)))))
+	 (cerbere--build (cerbere--python-tox-get-command "" toxenvs)))))
 
 ;;;###autoload
-(defun cerbere-tox (command)
+(defun cerbere-python-tox (command &optional test)
   "Tox cerbere backend."
   (pcase command
-    (`test (cerbere--tox-current-test))
-    (`file (cerbere--tox-current-class))
-    (`project (cerbere--tox-current-project))))
+    (`test (cerbere--python-tox-current-test))
+    (`file (cerbere--python-tox-current-class))
+    (`project (cerbere--python-tox-current-project))))
 
 
 ;;; End tox.el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(provide 'cerbere-tox)
-;;; cerbere-tox.el ends here
+(provide 'cerbere-python-tox)
+;;; cerbere-python-tox.el ends here

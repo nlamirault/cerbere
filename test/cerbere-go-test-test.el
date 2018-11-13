@@ -21,24 +21,17 @@
 
 ;;; Code:
 
-
 (require 'cerbere)
-(require 'cerbere-gotest)
+(require 'cerbere-go-test)
 
-(defun go-test-command (&rest arg)
-  (apply 's-concat "go test " arg))
-
-
-
-;; cerbere-go-test
+(defun go-test-command (&rest args)
+  "Return the go test command for running with ARGS."
+  (apply 'concat "go test " args))
 
 (ert-deftest test-cerbere-go-test ()
   (with-temp-buffer
     (go-mode)
-    (should (featurep 'cerbere-gotest))))
-
-
-;; Arguments
+    (should (featurep 'cerbere-go-test))))
 
 (ert-deftest test-go-test-get-program-without-args ()
   (should (string= (go-test-command)
@@ -51,6 +44,39 @@
 		     (cerbere--go-test-get-program
 		      (cerbere--go-test-arguments ""))))))
 
+(ert-deftest test-go-test-test-at-point ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (should-not (cerbere--go-test-test-at-point))
+    (forward-line 4)
+    (let ((test (cerbere--go-test-test-at-point)))
+      (should (equal "TestReverse" (cerbere--go-test-test-name test)))
+      (should (equal "hello_test.go" (cerbere--go-test-test-file test)))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))
+  (cerbere-with-test-content "go-test/hello.go"
+        (goto-char (point-max))
+    (should-not (cerbere--go-test-test-at-point))))
 
-(provide 'gotest-test)
+(ert-deftest test-go-test-test-for-file ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (let ((test (cerbere--go-test-test-for-file)))
+      (should-not (cerbere--go-test-test-name test))
+      (should (equal "hello_test.go" (cerbere--go-test-test-file test)))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))
+  (cerbere-with-test-content "go-test/hello.go"
+    (goto-char (point-max))
+    (should-not (cerbere--go-test-test-for-file))))
+
+(ert-deftest test-go-test-test-for-project ()
+  (cerbere-with-test-content "go-test/hello_test.go"
+    (let ((test (cerbere--go-test-test-for-project)))
+      (should-not (cerbere--go-test-test-name test))
+      (should-not (cerbere--go-test-test-file test))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test))))
+  (cerbere-with-test-content "go-test/hello.go"
+    (goto-char (point-max))
+    (let ((test (cerbere--go-test-test-for-project)))
+      (should-not (cerbere--go-test-test-name test))
+      (should-not (cerbere--go-test-test-file test))
+      (should (equal (concat cerbere-test-path "data/go-test/") (cerbere--go-test-test-root test)))))))
+
 ;;; cerbere-go-test-test.el ends here

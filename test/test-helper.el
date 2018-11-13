@@ -21,21 +21,29 @@
 
 ;;; Code:
 
-(require 'f)
+(defconst cerbere-test-path (file-name-as-directory
+                             (file-name-directory (or load-file-name buffer-file-name)))
+  "The test directory.")
+(defconst cerbere-test-data-path (file-name-as-directory
+                                  (concat cerbere-test-path "data"))
+  "The test data directory.")
+(defconst cerbere-root-path (file-name-as-directory
+                             (file-name-directory
+                              (directory-file-name cerbere-test-path)))
+  "The cerbere project root path.")
+(add-to-list 'load-path cerbere-root-path)
 
-(setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
-      debug-on-error t)
+(defmacro cerbere-with-test-content (file-name &rest body)
+  "Setup a buffer backing FILE-NAME with CONTENT and run BODY in it."
+  (declare (indent 1))
+  `(let ((file-path (concat cerbere-test-data-path ,file-name)))
+     (unless (file-exists-p file-path)
+       (error "File %s does not exists" file-path))
+     (save-excursion
+       (with-current-buffer (find-file-noselect file-path)
+         (goto-char (point-min))
+         ,@body
+         (kill-buffer)))))
 
-
-(defconst cerbere-testsuite-dir (f-parent (f-this-file))
-  "The testsuite directory for Cerbere.")
-
-(defconst cerbere-source-dir (f-parent cerbere-testsuite-dir)
-  "The cerbere source directory.")
-
-(message "Running tests on Emacs %s" emacs-version)
-
-(message "Load cerbere : %s" cerbere-source-dir)
-(load (s-concat cerbere-source-dir "/cerbere.elc"))
-
+(provide 'test-helper)
 ;;; test-helper.el ends here
