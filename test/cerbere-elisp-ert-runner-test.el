@@ -21,7 +21,6 @@
 
 ;;; Code:
 
-(require 'test-helper)
 (require 'cerbere-elisp-ert-runner)
 
 (ert-deftest test-cerbere-elisp-ert-runner ()

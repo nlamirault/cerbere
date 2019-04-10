@@ -45,5 +45,4 @@
          ,@body
          (kill-buffer)))))
 
-(provide 'test-helper)
 ;;; test-helper.el ends here
